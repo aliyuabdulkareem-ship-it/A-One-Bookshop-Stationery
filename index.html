@@ -3,160 +3,277 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A-One Bookshop</title>
+    <meta name="description" content="A-One Bookshop & Stationery — Ibadan's trusted bookstore" />
+    <title>A-One Bookshop & Stationery | Books & Stationery in Ibadan</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        * { scrollbar-width: thin; scrollbar-color: #d4a574 transparent; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Roboto, sans-serif; }
+    </style>
 </head>
 <body>
     <div id="root"></div>
+
     <script type="text/babel">
         const { useState } = React;
+
         const products = [
-            { id: '1', name: 'Art of Programming', author: 'D. Knuth', price: 45000, icon: '📘' },
-            { id: '2', name: 'Web Development', author: 'S. Chen', price: 38500, icon: '💻' },
-            { id: '3', name: 'Design Thinking', author: 'T. Brown', price: 32000, icon: '📙' },
-            { id: '4', name: 'Notebook Set', author: 'A1', price: 18900, icon: '📓' },
-            { id: '5', name: 'Pen Collection', author: 'A1', price: 12500, icon: '🖊️' },
-            { id: '6', name: 'Sketch Pad', author: 'A1', price: 22000, icon: '📒' }
+            { id: '1', name: 'The Art of Programming', author: 'Donald Knuth', price: 45000, category: 'physical-books', image: '📘' },
+            { id: '2', name: 'Modern Web Development', author: 'Sarah Chen', price: 38500, category: 'ebooks', image: '📱' },
+            { id: '3', name: 'Design Thinking', author: 'Tim Brown', price: 32000, category: 'physical-books', image: '📙' },
+            { id: '4', name: 'Premium Notebook Set', author: 'A1 Stationery', price: 18900, category: 'stationery', image: '📓' },
+            { id: '5', name: 'Fine Tip Pen Collection', author: 'A1 Stationery', price: 12500, category: 'stationery', image: '🖊️' },
+            { id: '6', name: 'Artist Sketch Pad', author: 'A1 Stationery', price: 22000, category: 'art-supplies', image: '📒' },
         ];
 
-        function App() {
-            const [page, setPage] = useState('home');
-            const [cart, setCart] = useState([]);
-            const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-
-            const addToCart = (p) => {
-                setCart(prev => {
-                    const ex = prev.find(i => i.id === p.id);
-                    return ex ? prev.map(i => i.id === p.id ? {...i, quantity: i.quantity+1} : i) : [...prev, {...p, quantity: 1}];
-                });
-            };
-
-            const removeFromCart = (id) => setCart(prev => prev.filter(i => i.id !== id));
-            const updateQty = (id, delta) => setCart(prev => prev.map(i => i.id === id ? {...i, quantity: Math.max(1, i.quantity+delta)} : i));
-            const total = cart.reduce((sum, i) => sum + i.price * i.quantity, 0);
-
-            const handleCheckout = (e) => {
-                e.preventDefault();
-                const name = e.target.name.value;
-                const addr = e.target.address.value;
-                const phone = e.target.phone.value;
-                if(!name || !addr || !phone) return alert('Fill all fields');
-                
-                let msg = `*New Order - A-One Bookshop*\n\n*Customer:* ${name}\n*Address:* ${addr}\n*Phone:* ${phone}\n\n*Items:*\n`;
-                cart.forEach(i => msg += `- ${i.quantity}x ${i.name} (N${(i.price*i.quantity).toLocaleString()})\n`);
-                msg += `\n*Total: N${total.toLocaleString()}*`;
-                
-                window.open(`https://wa.me/2348140730041?text=${encodeURIComponent(msg)}`, '_blank');
-            };
-
+        // --- WHATSAPP FLOATING BUTTON ---
+        function WhatsAppButton() {
             return (
-                <div className="min-h-screen bg-gray-50 font-sans">
-                    <nav className="bg-white border-b border-amber-100 sticky top-0 z-40">
-                        <div className="max-w-7xl mx-auto px-4 h-16 flex justify-between items-center">
-                            <button onClick={() => setPage('home')} className="flex items-center gap-2">
-                                <div className="w-8 h-8 bg-amber-600 rounded-lg flex items-center justify-center text-white font-bold">A1</div>
-                                <span className="font-bold text-gray-900">A-One Bookshop</span>
+                <a href="https://wa.me/2348140730041?text=Hello!%20I%20would%20like%20to%20inquire%20about%20your%20products." target="_blank" rel="noopener noreferrer" className="fixed bottom-6 right-6 z-50 group">
+                    <div className="relative">
+                        <div className="absolute inset-0 bg-green-500 rounded-full animate-ping opacity-20"></div>
+                        <div className="relative w-14 h-14 bg-green-500 rounded-full flex items-center justify-center shadow-lg hover:bg-green-600 hover:scale-110 transition-all duration-300">
+                            <svg className="w-7 h-7 text-white fill-current" viewBox="0 0 24 24"><path d="M20.52 3.449C12.831-3.984.106 1.407.101 11.893c0 2.096.549 4.14 1.595 5.945L0 24l6.335-1.652c7.926 4.156 17.389-1.59 17.394-10.447 0-3.176-1.24-6.165-3.483-8.402l.274-.052zM12.056 21.785c-1.675-.001-3.314-.452-4.745-1.305l-.34-.202-3.514.918.952-3.427-.222-.352c-2.066-3.284-1.526-7.58.899-10.351 2.425-2.771 6.512-3.612 9.898-2.026 3.386 1.586 5.448 5.074 4.97 8.721-.478 3.648-3.546 6.524-7.234 6.624h-.664z"/></svg>
+                        </div>
+                    </div>
+                </a>
+            );
+        }
+
+        // --- NAVBAR ---
+        function Navbar({ currentPage, setPage, cartCount }) {
+            return (
+                <nav className="bg-white/80 backdrop-blur-md border-b border-amber-100 sticky top-0 z-40">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="flex justify-between items-center h-16">
+                            <button onClick={() => setPage('home')} className="flex items-center gap-2.5">
+                                <div className="w-9 h-9 bg-gradient-to-br from-amber-500 to-amber-700 rounded-lg flex items-center justify-center">
+                                    <span className="text-white text-lg"></span>
+                                </div>
+                                <span className="text-lg font-bold text-gray-900">A-One <span className="text-amber-600">Bookshop</span></span>
                             </button>
-                            <div className="flex gap-2">
-                                <button onClick={() => setPage('home')} className={`px-4 py-2 rounded-full text-sm font-medium ${page==='home'?'bg-amber-50 text-amber-700':'text-gray-600'}`}>Home</button>
-                                <button onClick={() => setPage('shop')} className={`px-4 py-2 rounded-full text-sm font-medium ${page==='shop'?'bg-amber-50 text-amber-700':'text-gray-600'}`}>Shop</button>
-                                <button onClick={() => setPage('cart')} className="relative px-4 py-2 rounded-full bg-amber-600 text-white text-sm font-medium flex items-center gap-2">
-                                    Cart {cartCount > 0 && <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">{cartCount}</span>}
+                            <div className="flex items-center gap-2">
+                                <button onClick={() => setPage('home')} className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${currentPage === 'home' ? 'bg-amber-50 text-amber-700' : 'text-gray-600 hover:bg-gray-50'}`}>Home</button>
+                                <button onClick={() => setPage('shop')} className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${currentPage === 'shop' ? 'bg-amber-50 text-amber-700' : 'text-gray-600 hover:bg-gray-50'}`}>Shop</button>
+                                <button onClick={() => setPage('cart')} className="relative px-4 py-2 rounded-full bg-amber-600 text-white text-sm font-medium hover:bg-amber-700 flex items-center gap-2">
+                                    🛒 Cart
+                                    {cartCount > 0 && <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center">{cartCount}</span>}
                                 </button>
                             </div>
                         </div>
-                    </nav>
+                    </div>
+                </nav>
+            );
+        }
 
-                    {page === 'home' && (
-                        <div className="max-w-7xl mx-auto px-4 py-20 text-center">
-                            <h1 className="text-5xl font-bold text-gray-900 mb-6">Your Trusted <span className="text-amber-600">Bookshop</span></h1>
-                            <p className="text-xl text-gray-600 mb-8">Ibadan's destination for books and stationery.</p>
-                            <button onClick={() => setPage('shop')} className="bg-amber-600 text-white px-8 py-3 rounded-full font-medium hover:bg-amber-700">Browse Collection</button>
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16">
-                                {products.slice(0, 3).map(p => (
-                                    <div key={p.id} className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-                                        <div className="text-5xl mb-4">{p.icon}</div>
-                                        <h3 className="font-bold text-lg">{p.name}</h3>
-                                        <p className="text-gray-500 text-sm mb-2">by {p.author}</p>
-                                        <span className="text-amber-600 font-bold">N{p.price.toLocaleString()}</span>
+        // --- HOME PAGE ---
+        function Home({ setPage }) {
+            const featured = products.slice(0, 3);
+            return (
+                <div className="min-h-screen">
+                    <section className="relative overflow-hidden bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-36">
+                            <div className="max-w-2xl">
+                                <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full text-sm text-amber-700 font-medium mb-6 shadow-sm">✨ Serving Ibadan with Quality Books & Stationery</div>
+                                <h1 className="text-5xl md:text-6xl font-bold text-gray-900 leading-tight mb-6">Your Trusted <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-600 to-orange-600">Bookshop</span></h1>
+                                <p className="text-lg text-gray-600 mb-8 leading-relaxed">Welcome to <strong>A-One Bookshop & Stationery</strong> — Ibadan's destination for physical books, e-books, and premium stationery.</p>
+                                <div className="flex flex-wrap gap-4">
+                                    <button onClick={() => setPage('shop')} className="inline-flex items-center gap-2 bg-amber-600 text-white px-7 py-3.5 rounded-full font-medium hover:bg-amber-700 transition-all hover:shadow-lg">Browse Collection →</button>
+                                    <a href="https://wa.me/2348140730041" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-green-600 text-white px-7 py-3.5 rounded-full font-medium hover:bg-green-700 transition-all hover:shadow-lg">Chat on WhatsApp</a>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <section className="py-20 bg-gray-50/50">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Featured Products</h2>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                {featured.map(product => (
+                                    <div key={product.id} className="bg-white rounded-2xl p-6 border border-gray-100 hover:shadow-lg transition-all">
+                                        <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-6 flex items-center justify-center mb-4"><span className="text-5xl">{product.image}</span></div>
+                                        <h3 className="font-semibold text-gray-900 text-lg mb-1">{product.name}</h3>
+                                        <p className="text-sm text-gray-500 mb-3">by {product.author}</p>
+                                        <span className="text-lg font-bold text-amber-600">₦{product.price.toLocaleString()}</span>
                                     </div>
                                 ))}
                             </div>
                         </div>
-                    )}
+                    </section>
+                    <footer className="bg-gray-900 text-white py-12"><div className="max-w-7xl mx-auto px-4 text-center"><p className="text-sm text-gray-400">© 2026 A-One Bookshop & Stationery. All rights reserved.</p></div></footer>
+                </div>
+            );
+        }
 
-                    {page === 'shop' && (
-                        <div className="max-w-7xl mx-auto px-4 py-12">
-                            <h1 className="text-3xl font-bold mb-8">Our Collection</h1>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                                {products.map(p => (
-                                    <div key={p.id} className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg transition-all">
-                                        <div className="bg-amber-50 p-12 flex items-center justify-center text-6xl">{p.icon}</div>
-                                        <div className="p-5">
-                                            <h3 className="font-bold text-lg">{p.name}</h3>
-                                            <p className="text-gray-500 text-sm mb-4">by {p.author}</p>
-                                            <div className="flex justify-between items-center">
-                                                <span className="font-bold text-lg">N{p.price.toLocaleString()}</span>
-                                                <button onClick={() => addToCart(p)} className="px-4 py-2 bg-amber-600 text-white rounded-full text-sm font-medium hover:bg-amber-700">Add</button>
-                                            </div>
+        // --- SHOP PAGE ---
+        function Shop({ addToCart }) {
+            const [search, setSearch] = useState('');
+            const filtered = products.filter(p => p.name.toLowerCase().includes(search.toLowerCase()) || p.author.toLowerCase().includes(search.toLowerCase()));
+
+            return (
+                <div className="min-h-screen bg-gray-50/50">
+                    <div className="bg-white border-b border-gray-100"><div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"><h1 className="text-3xl font-bold text-gray-900">Our Collection</h1></div></div>
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                        <input type="text" placeholder="Search books, stationery..." value={search} onChange={e => setSearch(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-amber-300 focus:ring-2 focus:ring-amber-100 outline-none mb-6" />
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                            {filtered.map(product => (
+                                <div key={product.id} className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl transition-all">
+                                    <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-8 flex items-center justify-center h-48"><span className="text-6xl">{product.image}</span></div>
+                                    <div className="p-5">
+                                        <h3 className="font-semibold text-gray-900 text-lg mb-1">{product.name}</h3>
+                                        <p className="text-sm text-gray-500 mb-2">by {product.author}</p>
+                                        <div className="flex items-center justify-between mt-4">
+                                            <span className="text-xl font-bold text-gray-900">₦{product.price.toLocaleString()}</span>
+                                            <button onClick={() => addToCart(product)} className="px-4 py-2 bg-amber-600 text-white rounded-full text-sm font-medium hover:bg-amber-700">Add to Cart</button>
                                         </div>
                                     </div>
-                                ))}
-                            </div>
+                                </div>
+                            ))}
                         </div>
-                    )}
+                    </div>
+                </div>
+            );
+        }
 
-                    {page === 'cart' && (cart.length === 0 ? (
-                        <div className="max-w-7xl mx-auto px-4 py-20 text-center">
-                            <h2 className="text-2xl font-bold mb-4">Your cart is empty</h2>
-                            <button onClick={() => setPage('shop')} className="text-amber-600 font-medium">Go to Shop</button>
+        // --- CART & CHECKOUT PAGE ---
+        function Cart({ cart, removeFromCart, updateQuantity }) {
+            const [name, setName] = useState('');
+            const [address, setAddress] = useState('');
+            const [phone, setPhone] = useState('');
+
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+            const handleCheckout = (e) => {
+                e.preventDefault();
+                if (!name || !address || !phone) return alert('Please fill in all details');
+
+                let message = `*🛒 New Order - A-One Bookshop*\n\n`;
+                message += `*Customer Details:*\nName: ${name}\nAddress: ${address}\nPhone: ${phone}\n\n`;
+                message += `*Order Items:*\n`;
+                
+                cart.forEach(item => {
+                    message += `- ${item.quantity}x ${item.name} (₦${(item.price * item.quantity).toLocaleString()})\n`;
+                });
+                
+                message += `\n*Total Amount: ₦${total.toLocaleString()}*`;
+
+                const whatsappUrl = `https://wa.me/2348140730041?text=${encodeURIComponent(message)}`;
+                window.open(whatsappUrl, '_blank');
+            };
+
+            if (cart.length === 0) {
+                return (
+                    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+                        <div className="text-center">
+                            <div className="text-6xl mb-4"></div>
+                            <h2 className="text-2xl font-bold text-gray-900 mb-2">Your cart is empty</h2>
+                            <p className="text-gray-500">Add some books to get started!</p>
                         </div>
-                    ) : (
-                        <div className="max-w-4xl mx-auto px-4 py-12 grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div className="bg-white rounded-2xl border border-gray-100 p-6">
-                                <h2 className="text-xl font-bold mb-4">Your Items</h2>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="min-h-screen bg-gray-50/50 py-12">
+                    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <h1 className="text-3xl font-bold text-gray-900 mb-8">Checkout</h1>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            {/* Cart Items */}
+                            <div className="bg-white rounded-2xl border border-gray-100 p-6 h-fit">
+                                <h2 className="text-xl font-bold text-gray-900 mb-4">Your Items</h2>
                                 <div className="space-y-4">
-                                    {cart.map(i => (
-                                        <div key={i.id} className="flex justify-between items-center border-b border-gray-100 pb-4">
+                                    {cart.map(item => (
+                                        <div key={item.id} className="flex items-center justify-between border-b border-gray-100 pb-4 last:border-0 last:pb-0">
                                             <div className="flex items-center gap-3">
-                                                <span className="text-2xl">{i.icon}</span>
+                                                <span className="text-2xl">{item.image}</span>
                                                 <div>
-                                                    <p className="font-medium">{i.name}</p>
-                                                    <p className="text-sm text-gray-500">N{i.price.toLocaleString()}</p>
+                                                    <p className="font-medium text-gray-900">{item.name}</p>
+                                                    <p className="text-sm text-gray-500">₦{item.price.toLocaleString()}</p>
                                                 </div>
                                             </div>
                                             <div className="flex items-center gap-2">
-                                                <button onClick={() => updateQty(i.id, -1)} className="w-6 h-6 rounded bg-gray-100">-</button>
-                                                <span className="w-6 text-center">{i.quantity}</span>
-                                                <button onClick={() => updateQty(i.id, 1)} className="w-6 h-6 rounded bg-gray-100">+</button>
-                                                <button onClick={() => removeFromCart(i.id)} className="ml-2 text-red-500 text-sm">Remove</button>
+                                                <button onClick={() => updateQuantity(item.id, -1)} className="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200">-</button>
+                                                <span className="w-6 text-center font-medium">{item.quantity}</span>
+                                                <button onClick={() => updateQuantity(item.id, 1)} className="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200">+</button>
+                                                <button onClick={() => removeFromCart(item.id)} className="ml-2 text-red-500 hover:text-red-700 text-sm">Remove</button>
                                             </div>
                                         </div>
                                     ))}
                                 </div>
-                                <div className="mt-6 pt-4 border-t flex justify-between items-center">
-                                    <span className="font-bold text-lg">Total:</span>
-                                    <span className="text-2xl font-bold text-amber-600">N{total.toLocaleString()}</span>
+                                <div className="mt-6 pt-4 border-t border-gray-200 flex justify-between items-center">
+                                    <span className="text-lg font-bold text-gray-900">Total:</span>
+                                    <span className="text-2xl font-bold text-amber-600">₦{total.toLocaleString()}</span>
                                 </div>
                             </div>
-                            <div className="bg-white rounded-2xl border border-gray-100 p-6">
-                                <h2 className="text-xl font-bold mb-4">Delivery Details</h2>
+
+                            {/* Checkout Form */}
+                            <div className="bg-white rounded-2xl border border-gray-100 p-6 h-fit">
+                                <h2 className="text-xl font-bold text-gray-900 mb-4">Delivery Details</h2>
                                 <form onSubmit={handleCheckout} className="space-y-4">
-                                    <input name="name" type="text" placeholder="Full Name" className="w-full px-4 py-3 rounded-xl border border-gray-200 outline-none focus:border-amber-300" required />
-                                    <input name="address" type="text" placeholder="Delivery Address" className="w-full px-4 py-3 rounded-xl border border-gray-200 outline-none focus:border-amber-300" required />
-                                    <input name="phone" type="tel" placeholder="Phone Number" className="w-full px-4 py-3 rounded-xl border border-gray-200 outline-none focus:border-amber-300" required />
-                                    <button type="submit" className="w-full bg-green-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-green-700">Order via WhatsApp</button>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                                        <input type="text" value={name} onChange={e => setName(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-amber-300 focus:ring-2 focus:ring-amber-100 outline-none" placeholder="John Doe" required />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Delivery Address</label>
+                                        <input type="text" value={address} onChange={e => setAddress(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-amber-300 focus:ring-2 focus:ring-amber-100 outline-none" placeholder="123 Main St, Ibadan" required />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                                        <input type="tel" value={phone} onChange={e => setPhone(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-amber-300 focus:ring-2 focus:ring-amber-100 outline-none" placeholder="08012345678" required />
+                                    </div>
+                                    <button type="submit" className="w-full bg-green-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-green-700 transition-all flex items-center justify-center gap-2 mt-4">
+                                        <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M20.52 3.449C12.831-3.984.106 1.407.101 11.893c0 2.096.549 4.14 1.595 5.945L0 24l6.335-1.652c7.926 4.156 17.389-1.59 17.394-10.447 0-3.176-1.24-6.165-3.483-8.402l.274-.052zM12.056 21.785c-1.675-.001-3.314-.452-4.745-1.305l-.34-.202-3.514.918.952-3.427-.222-.352c-2.066-3.284-1.526-7.58.899-10.351 2.425-2.771 6.512-3.612 9.898-2.026 3.386 1.586 5.448 5.074 4.97 8.721-.478 3.648-3.546 6.524-7.234 6.624h-.664z"/></svg>
+                                        Order via WhatsApp
+                                    </button>
+                                    <p className="text-xs text-gray-500 text-center mt-2">This will open WhatsApp with your order details pre-filled.</p>
                                 </form>
                             </div>
                         </div>
-                    ))}
+                    </div>
+                </div>
+            );
+        }
 
-                    <a href="https://wa.me/2348140730041" target="_blank" className="fixed bottom-6 right-6 w-14 h-14 bg-green-500 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform">
-                        <svg className="w-7 h-7 text-white fill-current" viewBox="0 0 24 24"><path d="M20.52 3.449C12.831-3.984.106 1.407.101 11.893c0 2.096.549 4.14 1.595 5.945L0 24l6.335-1.652c7.926 4.156 17.389-1.59 17.394-10.447 0-3.176-1.24-6.165-3.483-8.402l.274-.052zM12.056 21.785c-1.675-.001-3.314-.452-4.745-1.305l-.34-.202-3.514.918.952-3.427-.222-.352c-2.066-3.284-1.526-7.58.899-10.351 2.425-2.771 6.512-3.612 9.898-2.026 3.386 1.586 5.448 5.074 4.97 8.721-.478 3.648-3.546 6.524-7.234 6.624h-.664z"/></svg>
-                    </a>
+        // --- MAIN APP ---
+        function App() {
+            const [page, setPage] = useState('home');
+            const [cart, setCart] = useState([]);
+
+            const addToCart = (product) => {
+                setCart(prev => {
+                    const existing = prev.find(item => item.id === product.id);
+                    if (existing) {
+                        return prev.map(item => item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item);
+                    }
+                    return [...prev, { ...product, quantity: 1 }];
+                });
+                alert(`${product.name} added to cart!`);
+            };
+
+            const removeFromCart = (id) => setCart(prev => prev.filter(item => item.id !== id));
+
+            const updateQuantity = (id, change) => {
+                setCart(prev => prev.map(item => {
+                    if (item.id === id) {
+                        const newQty = item.quantity + change;
+                        return newQty > 0 ? { ...item, quantity: newQty } : item;
+                    }
+                    return item;
+                }));
+            };
+
+            const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+            return (
+                <div className="min-h-screen bg-gray-50">
+                    <Navbar currentPage={page} setPage={setPage} cartCount={cartCount} />
+                    {page === 'home' && <Home setPage={setPage} />}
+                    {page === 'shop' && <Shop addToCart={addToCart} />}
+                    {page === 'cart' && <Cart cart={cart} removeFromCart={removeFromCart} updateQuantity={updateQuantity} />}
+                    <WhatsAppButton />
                 </div>
             );
         }
