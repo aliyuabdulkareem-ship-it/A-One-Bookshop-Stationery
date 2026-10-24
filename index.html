@@ -14,41 +14,15 @@
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Roboto, sans-serif; }
         
         /* Bouncing star animation */
-        @keyframes bounce-slow {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(5deg); }
-        }
+        @keyframes bounce-slow { 0%, 100% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-20px) rotate(5deg); } }
+        @keyframes float { 0%, 100% { transform: translateY(0px) translateX(0px); } 25% { transform: translateY(-10px) translateX(5px); } 75% { transform: translateY(-15px) translateX(-5px); } }
+        @keyframes sparkle { 0%, 100% { opacity: 0; transform: scale(0); } 50% { opacity: 1; transform: scale(1); } }
         
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) translateX(0px); }
-            25% { transform: translateY(-10px) translateX(5px); }
-            75% { transform: translateY(-15px) translateX(-5px); }
-        }
-        
-        @keyframes sparkle {
-            0%, 100% { opacity: 0; transform: scale(0); }
-            50% { opacity: 1; transform: scale(1); }
-        }
-        
-        .bounce-slow {
-            animation: bounce-slow 3s ease-in-out infinite;
-        }
-        
-        .float {
-            animation: float 4s ease-in-out infinite;
-        }
-        
-        .sparkle {
-            animation: sparkle 2s ease-in-out infinite;
-        }
-        
-        .sparkle-delay-1 {
-            animation: sparkle 2s ease-in-out 0.5s infinite;
-        }
-        
-        .sparkle-delay-2 {
-            animation: sparkle 2s ease-in-out 1s infinite;
-        }
+        .bounce-slow { animation: bounce-slow 3s ease-in-out infinite; }
+        .float { animation: float 4s ease-in-out infinite; }
+        .sparkle { animation: sparkle 2s ease-in-out infinite; }
+        .sparkle-delay-1 { animation: sparkle 2s ease-in-out 0.5s infinite; }
+        .sparkle-delay-2 { animation: sparkle 2s ease-in-out 1s infinite; }
     </style>
 </head>
 <body>
@@ -63,24 +37,23 @@
         const ADMIN_PHONE = "2348140730041";
 
         const defaultProducts = [
-            { id: '1', name: 'The Art of Programming', author: 'Donald Knuth', price: 45000, category: 'physical-books', image: '', publisherId: 'admin' },
-            { id: '2', name: 'Modern Web Development', author: 'Sarah Chen', price: 38500, category: 'ebooks', image: '', publisherId: 'admin' },
-            { id: '3', name: 'Design Thinking', author: 'Tim Brown', price: 32000, category: 'physical-books', image: '', publisherId: 'admin' },
+            { id: '1', name: 'The Art of Programming', author: 'Donald Knuth', price: 45000, category: 'physical-books', image: '📘', publisherId: 'admin' },
+            { id: '2', name: 'Modern Web Development', author: 'Sarah Chen', price: 38500, category: 'ebooks', image: '📱', publisherId: 'admin' },
+            { id: '3', name: 'Design Thinking', author: 'Tim Brown', price: 32000, category: 'physical-books', image: '📙', publisherId: 'admin' },
             { id: '4', name: 'The Great Novel (Audio)', author: 'James Mitchell', price: 19900, category: 'audiobooks', image: '', publisherId: 'admin' },
-            { id: '5', name: 'Science of Everything', author: 'Dr. Emily Park', price: 29900, category: 'physical-books', image: '', publisherId: 'admin' },
-            { id: '6', name: 'Premium Notebook Set', author: 'A1 Stationery', price: 18900, category: 'stationery', image: '', publisherId: 'admin' },
-            { id: '7', name: 'Fine Tip Pen Collection', author: 'A1 Stationery', price: 12500, category: 'stationery', image: '', publisherId: 'admin' },
-            { id: '8', name: 'Artist Sketch Pad', author: 'A1 Stationery', price: 22000, category: 'art-supplies', image: '', publisherId: 'admin' },
-            { id: '9', name: 'Wooden Desk Organizer', author: 'A1 Stationery', price: 34900, category: 'office-supplies', image: '', publisherId: 'admin' },
-            { id: '10', name: 'Colored Marker Set (24pc)', author: 'A1 Stationery', price: 28000, category: 'art-supplies', image: '', publisherId: 'admin' },
-            { id: '11', name: 'Mindful Living', author: 'Anna Roberts', price: 14900, category: 'ebooks', image: '', publisherId: 'admin' },
-            { id: '12', name: 'Tech Monthly (December)', author: 'TechPress', price: 6900, category: 'magazines', image: '', publisherId: 'admin' },
+            { id: '5', name: 'Science of Everything', author: 'Dr. Emily Park', price: 29900, category: 'physical-books', image: '🔬', publisherId: 'admin' },
+            { id: '6', name: 'Premium Notebook Set', author: 'A1 Stationery', price: 18900, category: 'stationery', image: '📓', publisherId: 'admin' },
+            { id: '7', name: 'Fine Tip Pen Collection', author: 'A1 Stationery', price: 12500, category: 'stationery', image: '🖊️', publisherId: 'admin' },
+            { id: '8', name: 'Artist Sketch Pad', author: 'A1 Stationery', price: 22000, category: 'art-supplies', image: '🎨', publisherId: 'admin' },
+            { id: '9', name: 'Wooden Desk Organizer', author: 'A1 Stationery', price: 34900, category: 'office-supplies', image: '🗂️', publisherId: 'admin' },
+            { id: '10', name: 'Colored Marker Set (24pc)', author: 'A1 Stationery', price: 28000, category: 'art-supplies', image: '🖍️', publisherId: 'admin' },
+            { id: '11', name: 'Mindful Living', author: 'Anna Roberts', price: 14900, category: 'ebooks', image: '🧘', publisherId: 'admin' },
+            { id: '12', name: 'Tech Monthly (December)', author: 'TechPress', price: 6900, category: 'magazines', image: '📰', publisherId: 'admin' },
         ];
 
         const categories = ['all', 'physical-books', 'ebooks', 'audiobooks', 'stationery', 'art-supplies', 'office-supplies', 'magazines'];
         const categoryLabels = { 'all': 'All Items', 'physical-books': 'Physical Books', 'ebooks': 'E-Books', 'audiobooks': 'Audiobooks', 'stationery': 'Stationery', 'art-supplies': 'Art Supplies', 'office-supplies': 'Office', 'magazines': 'Magazines' };
 
-        // SVG Icons for "What We Offer"
         const categoryIcons = {
             'physical-books': <svg className="w-10 h-10 text-blue-500" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>,
             'ebooks': <svg className="w-10 h-10 text-purple-500" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3"/></svg>,
@@ -138,40 +111,16 @@
             );
         }
 
-        function Home({ setPage, products }) {
+        // UPDATED HOME COMPONENT: Added setShopCategory prop and click handlers
+        function Home({ setPage, products, setShopCategory }) {
             const featured = products.slice(0, 3);
             return (
                 <div className="min-h-screen">
                     <section className="relative overflow-hidden bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
-                        {/* Animated Stars Background */}
-                        <div className="absolute top-20 right-10 md:right-32 opacity-60">
-                            <div className="bounce-slow">
-                                <svg className="w-16 h-16 text-amber-400" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
-                                </svg>
-                            </div>
-                        </div>
-                        <div className="absolute top-40 right-20 md:right-48 opacity-40">
-                            <div className="float">
-                                <svg className="w-10 h-10 text-orange-400" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
-                                </svg>
-                            </div>
-                        </div>
-                        <div className="absolute top-32 right-40 md:right-64 opacity-30">
-                            <div className="sparkle">
-                                <svg className="w-6 h-6 text-yellow-400" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
-                                </svg>
-                            </div>
-                        </div>
-                        <div className="absolute top-48 right-16 md:right-40 opacity-50">
-                            <div className="sparkle-delay-1">
-                                <svg className="w-8 h-8 text-amber-300" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
-                                </svg>
-                            </div>
-                        </div>
+                        <div className="absolute top-20 right-10 md:right-32 opacity-60"><div className="bounce-slow"><svg className="w-16 h-16 text-amber-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" /></svg></div></div>
+                        <div className="absolute top-40 right-20 md:right-48 opacity-40"><div className="float"><svg className="w-10 h-10 text-orange-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" /></svg></div></div>
+                        <div className="absolute top-32 right-40 md:right-64 opacity-30"><div className="sparkle"><svg className="w-6 h-6 text-yellow-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" /></svg></div></div>
+                        <div className="absolute top-48 right-16 md:right-40 opacity-50"><div className="sparkle-delay-1"><svg className="w-8 h-8 text-amber-300" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" /></svg></div></div>
                         
                         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-36 relative z-10">
                             <div className="max-w-2xl">
@@ -189,19 +138,24 @@
                         </div>
                     </section>
 
-                    {/* WHAT WE OFFER SECTION */}
+                    {/* UPDATED WHAT WE OFFER SECTION: Added onClick handlers and cursor-pointer */}
                     <section className="py-20 bg-gray-50/50">
                         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                             <div className="text-center mb-12">
                                 <h2 className="text-4xl font-bold text-gray-900 mb-3">What We Offer</h2>
-                                <p className="text-gray-500 max-w-2xl mx-auto text-lg">From physical books to digital content — everything for the modern reader and creator.</p>
+                                <p className="text-gray-500 max-w-2xl mx-auto text-lg">From physical books to digital content — click a category to explore.</p>
                             </div>
                             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
                                 {Object.keys(categoryDescriptions).map(cat => (
-                                    <div key={cat} className="bg-white rounded-2xl p-5 border border-gray-100 hover:shadow-md transition-all text-center hover:-translate-y-1">
-                                        <div className="flex justify-center mb-3">{categoryIcons[cat]}</div>
+                                    <div 
+                                        key={cat} 
+                                        onClick={() => { setShopCategory(cat); setPage('shop'); }} 
+                                        className="bg-white rounded-2xl p-5 border border-gray-100 hover:shadow-lg hover:border-amber-300 transition-all text-center hover:-translate-y-1 cursor-pointer group"
+                                    >
+                                        <div className="flex justify-center mb-3 group-hover:scale-110 transition-transform duration-300">{categoryIcons[cat]}</div>
                                         <h3 className="font-semibold text-gray-900 text-sm mb-1">{categoryLabels[cat]}</h3>
                                         <p className="text-xs text-gray-400">{categoryDescriptions[cat]}</p>
+                                        <div className="mt-3 text-xs font-medium text-amber-600 opacity-0 group-hover:opacity-100 transition-opacity">View All →</div>
                                     </div>
                                 ))}
                             </div>
@@ -223,14 +177,13 @@
                                         </div>
                                         <h3 className="font-semibold text-gray-900 text-lg mb-1">{product.name}</h3>
                                         <p className="text-sm text-gray-500 mb-3">by {product.author}</p>
-                                        <span className="text-lg font-bold text-amber-600">₦{product.price.toLocaleString()}</span>
+                                        <span className="text-lg font-bold text-amber-600">{product.price.toLocaleString()}</span>
                                     </div>
                                 ))}
                             </div>
                         </div>
                     </section>
 
-                    {/* PUBLISHER CTA SECTION */}
                     <section className="py-20 bg-gradient-to-br from-purple-50 to-indigo-50">
                         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                             <h2 className="text-4xl font-bold text-gray-900 mb-4">Are You a Publisher or Seller?</h2>
@@ -250,7 +203,7 @@
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 <a href="tel:+2348140730041" className="flex items-center gap-4 p-5 rounded-2xl bg-gray-50 hover:bg-amber-50 transition-colors">
-                                    <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm"><span className="text-xl"></span></div>
+                                    <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm"><span className="text-xl">📞</span></div>
                                     <div><p className="text-xs text-gray-500 mb-0.5">Call Us</p><p className="font-semibold text-gray-900">+234 814 073 0041</p></div>
                                 </a>
                                 <div className="flex items-center gap-4 p-5 rounded-2xl bg-gray-50">
@@ -279,9 +232,16 @@
             );
         }
 
-        function Shop({ addToCart, products }) {
+        // UPDATED SHOP COMPONENT: Added defaultCategory prop
+        function Shop({ addToCart, products, defaultCategory }) {
             const [search, setSearch] = useState('');
-            const [activeCategory, setActiveCategory] = useState('all');
+            const [activeCategory, setActiveCategory] = useState(defaultCategory || 'all');
+
+            // If the user clicks a category from Home, update the shop filter
+            useEffect(() => {
+                setActiveCategory(defaultCategory || 'all');
+            }, [defaultCategory]);
+
             const filtered = products.filter(p => {
                 const matchesSearch = p.name.toLowerCase().includes(search.toLowerCase()) || p.author.toLowerCase().includes(search.toLowerCase());
                 const matchesCategory = activeCategory === 'all' || p.category === activeCategory;
@@ -375,7 +335,7 @@
                                 </div>
                                 <div className="mt-6 pt-4 border-t border-gray-200 flex justify-between items-center">
                                     <span className="text-lg font-bold text-gray-900">Total:</span>
-                                    <span className="text-2xl font-bold text-amber-600">₦{total.toLocaleString()}</span>
+                                    <span className="text-2xl font-bold text-amber-600">{total.toLocaleString()}</span>
                                 </div>
                             </div>
                             <div className="bg-white rounded-2xl border border-gray-100 p-6 h-fit">
@@ -396,48 +356,30 @@
             );
         }
 
-        // Reusable Add Product Form with File Upload
         function ProductForm({ onSubmit, onCancel, accentColor = 'amber' }) {
             const [form, setForm] = useState({ name: '', author: '', price: '', category: 'physical-books', image: '', pdfFile: null, pdfName: '' });
             const [imagePreview, setImagePreview] = useState(null);
             const fileInputRef = useRef(null);
             const pdfInputRef = useRef(null);
 
-            const accentClasses = {
-                amber: 'focus:border-amber-500',
-                indigo: 'focus:border-indigo-500',
-            };
-            const btnClasses = {
-                amber: 'bg-amber-600 hover:bg-amber-700',
-                indigo: 'bg-indigo-600 hover:bg-indigo-700',
-            };
+            const accentClasses = { amber: 'focus:border-amber-500', indigo: 'focus:border-indigo-500' };
+            const btnClasses = { amber: 'bg-amber-600 hover:bg-amber-700', indigo: 'bg-indigo-600 hover:bg-indigo-700' };
 
             const handleImageUpload = (e) => {
                 const file = e.target.files[0];
                 if (!file) return;
-                if (file.size > 2 * 1024 * 1024) {
-                    alert('Image is too large. Please use an image under 2MB.');
-                    return;
-                }
+                if (file.size > 2 * 1024 * 1024) { alert('Image is too large. Please use an image under 2MB.'); return; }
                 const reader = new FileReader();
-                reader.onload = (ev) => {
-                    setImagePreview(ev.target.result);
-                    setForm({ ...form, image: ev.target.result });
-                };
+                reader.onload = (ev) => { setImagePreview(ev.target.result); setForm({ ...form, image: ev.target.result }); };
                 reader.readAsDataURL(file);
             };
 
             const handlePdfUpload = (e) => {
                 const file = e.target.files[0];
                 if (!file) return;
-                if (file.size > 10 * 1024 * 1024) {
-                    alert('PDF is too large. Please use a file under 10MB.');
-                    return;
-                }
+                if (file.size > 10 * 1024 * 1024) { alert('PDF is too large. Please use a file under 10MB.'); return; }
                 const reader = new FileReader();
-                reader.onload = (ev) => {
-                    setForm({ ...form, pdfFile: ev.target.result, pdfName: file.name });
-                };
+                reader.onload = (ev) => { setForm({ ...form, pdfFile: ev.target.result, pdfName: file.name }); };
                 reader.readAsDataURL(file);
             };
 
@@ -446,15 +388,7 @@
             const handleSubmit = (e) => {
                 e.preventDefault();
                 if (!form.name || !form.author || !form.price) return alert('Please fill in all required fields');
-                onSubmit({
-                    name: form.name,
-                    author: form.author,
-                    price: Number(form.price),
-                    category: form.category,
-                    image: form.image,
-                    pdfFile: form.pdfFile,
-                    pdfName: form.pdfName,
-                });
+                onSubmit({ name: form.name, author: form.author, price: Number(form.price), category: form.category, image: form.image, pdfFile: form.pdfFile, pdfName: form.pdfName });
             };
 
             return (
@@ -465,8 +399,6 @@
                     <select value={form.category} onChange={e => setForm({ ...form, category: e.target.value, pdfFile: null, pdfName: '' })} className={`border border-gray-300 p-3 rounded-lg outline-none ${accentClasses[accentColor]} bg-white`}>
                         {categories.filter(c => c !== 'all').map(cat => <option key={cat} value={cat}>{categoryLabels[cat]}</option>)}
                     </select>
-
-                    {/* Cover Image Upload */}
                     <div className="md:col-span-2 border border-dashed border-gray-300 rounded-lg p-4">
                         <p className="text-sm font-medium text-gray-700 mb-2">Product Cover (Optional)</p>
                         <div className="flex flex-col md:flex-row gap-3 items-start">
@@ -478,15 +410,9 @@
                                 <p className="text-xs text-gray-500 mb-2">Option B: Use an emoji instead</p>
                                 <input placeholder="e.g., 📘 (leave empty if uploaded image)" value={form.image && !form.image.startsWith('data:') ? form.image : ''} onChange={e => { setForm({ ...form, image: e.target.value }); setImagePreview(null); }} className="w-full border border-gray-300 p-2 rounded-lg outline-none text-lg" />
                             </div>
-                            {imagePreview && (
-                                <div className="w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden border border-gray-200">
-                                    <img src={imagePreview} alt="Preview" className="w-full h-full object-contain" />
-                                </div>
-                            )}
+                            {imagePreview && (<div className="w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden border border-gray-200"><img src={imagePreview} alt="Preview" className="w-full h-full object-contain" /></div>)}
                         </div>
                     </div>
-
-                    {/* PDF Upload for Digital Products */}
                     {isDigital && (
                         <div className="md:col-span-2 border border-dashed border-purple-300 bg-purple-50 rounded-lg p-4">
                             <p className="text-sm font-medium text-purple-900 mb-2">Digital File Upload (PDF/MP3, max 10MB)</p>
@@ -495,7 +421,6 @@
                             {form.pdfName && <p className="text-xs text-purple-700 mt-2">Selected: {form.pdfName}</p>}
                         </div>
                     )}
-
                     <div className="flex gap-3 md:col-span-2">
                         <button type="button" onClick={onCancel} className="flex-1 border border-gray-300 text-gray-700 p-3 rounded-lg hover:bg-gray-50">Cancel</button>
                         <button type="submit" className={`flex-1 ${btnClasses[accentColor]} text-white p-3 rounded-lg font-medium`}>Save Product</button>
@@ -538,13 +463,7 @@
             const handleSubmit = (e) => {
                 e.preventDefault();
                 if (!form.name || !form.phone) return alert('Please fill in your name and phone number');
-                let msg = `*New Publisher Registration Request*\n\n`;
-                msg += `*Name:* ${form.name}\n`;
-                msg += `*Email:* ${form.email || 'Not provided'}\n`;
-                msg += `*Phone:* ${form.phone}\n`;
-                msg += `*Business:* ${form.businessName || 'Not provided'}\n`;
-                msg += `*Products to sell:* ${form.products || 'Not specified'}\n\n`;
-                msg += `*Message:* ${form.message || 'I would like to become a publisher on A-One Bookshop.'}`;
+                let msg = `*New Publisher Registration Request*\n\n*Name:* ${form.name}\n*Email:* ${form.email || 'Not provided'}\n*Phone:* ${form.phone}\n*Business:* ${form.businessName || 'Not provided'}\n*Products to sell:* ${form.products || 'Not specified'}\n\n*Message:* ${form.message || 'I would like to become a publisher on A-One Bookshop.'}`;
                 window.open(`https://wa.me/${ADMIN_PHONE}?text=${encodeURIComponent(msg)}`, '_blank');
                 alert('Thank you! Your registration request has been sent. We will contact you shortly.');
                 setPage('home');
@@ -587,12 +506,7 @@
         function Admin({ products, setProducts, orders, setOrders, setPage }) {
             const [tab, setTab] = useState('products');
             const [showAddForm, setShowAddForm] = useState(false);
-
-            const handleAddProduct = (data) => {
-                const product = { id: Date.now().toString(), ...data, publisherId: 'admin' };
-                setProducts([...products, product]);
-                setShowAddForm(false);
-            };
+            const handleAddProduct = (data) => { const product = { id: Date.now().toString(), ...data, publisherId: 'admin' }; setProducts([...products, product]); setShowAddForm(false); };
             const handleDeleteProduct = (id) => { if (window.confirm('Delete this product?')) setProducts(products.filter(p => p.id !== id)); };
             const handleClearOrders = () => { if (window.confirm('Clear all order history?')) setOrders([]); };
 
@@ -620,13 +534,7 @@
                                         <tbody>
                                             {products.map(p => (
                                                 <tr key={p.id} className="border-t hover:bg-gray-50">
-                                                    <td className="p-4">
-                                                        {p.image && p.image.startsWith('data:') ? (
-                                                            <img src={p.image} alt={p.name} className="w-10 h-10 object-contain rounded" />
-                                                        ) : (
-                                                            <span className="text-2xl">{p.image || '📦'}</span>
-                                                        )}
-                                                    </td>
+                                                    <td className="p-4">{p.image && p.image.startsWith('data:') ? (<img src={p.image} alt={p.name} className="w-10 h-10 object-contain rounded" />) : (<span className="text-2xl">{p.image || ''}</span>)}</td>
                                                     <td className="p-4"><div className="font-medium text-gray-900">{p.name}</div><div className="text-sm text-gray-500">{p.author}</div>{p.pdfName && <div className="text-xs text-purple-600 mt-1">PDF: {p.pdfName}</div>}</td>
                                                     <td className="p-4 capitalize text-sm text-gray-600">{p.category.replace('-', ' ')}</td>
                                                     <td className="p-4 font-medium text-gray-900">₦{p.price.toLocaleString()}</td>
@@ -644,9 +552,7 @@
                                     <h2 className="text-xl font-bold">Recent Orders</h2>
                                     {orders.length > 0 && <button onClick={handleClearOrders} className="text-red-600 text-sm hover:underline font-medium">Clear All History</button>}
                                 </div>
-                                {orders.length === 0 ? (
-                                    <div className="bg-white p-12 rounded-xl border border-gray-200 text-center text-gray-500 shadow-sm"><div className="text-4xl mb-3"></div><p>No orders yet.</p></div>
-                                ) : (
+                                {orders.length === 0 ? (<div className="bg-white p-12 rounded-xl border border-gray-200 text-center text-gray-500 shadow-sm"><div className="text-4xl mb-3">📦</div><p>No orders yet.</p></div>) : (
                                     <div className="space-y-4">
                                         {orders.map(order => (
                                             <div key={order.id} className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
@@ -654,11 +560,9 @@
                                                     <div><h3 className="font-bold text-lg text-gray-900">{order.customer.name}</h3><p className="text-sm text-gray-500">{order.date}</p></div>
                                                     <span className="bg-amber-100 text-amber-800 px-4 py-1.5 rounded-full text-sm font-bold">₦{order.total.toLocaleString()}</span>
                                                 </div>
-                                                <div className="text-sm text-gray-600 mb-4 bg-gray-50 p-3 rounded-lg"><p className="mb-1"> {order.customer.address}</p><p> {order.customer.phone}</p></div>
+                                                <div className="text-sm text-gray-600 mb-4 bg-gray-50 p-3 rounded-lg"><p className="mb-1">📍 {order.customer.address}</p><p>📞 {order.customer.phone}</p></div>
                                                 <div className="border-t pt-3 space-y-1">
-                                                    {order.items.map((item, idx) => (
-                                                        <div key={idx} className="flex justify-between text-sm"><span className="text-gray-700">{item.quantity}x {item.name}</span><span className="font-medium text-gray-900">₦{(item.price * item.quantity).toLocaleString()}</span></div>
-                                                    ))}
+                                                    {order.items.map((item, idx) => (<div key={idx} className="flex justify-between text-sm"><span className="text-gray-700">{item.quantity}x {item.name}</span><span className="font-medium text-gray-900">₦{(item.price * item.quantity).toLocaleString()}</span></div>))}
                                                 </div>
                                             </div>
                                         ))}
@@ -674,16 +578,10 @@
         function Publisher({ products, setProducts, orders, setPage }) {
             const [tab, setTab] = useState('products');
             const [showAddForm, setShowAddForm] = useState(false);
-
             const myProducts = products.filter(p => p.publisherId === PUBLISHER_ID);
             const myProductIds = myProducts.map(p => p.id);
             const myOrders = orders.filter(o => o.items.some(i => myProductIds.includes(i.id)));
-
-            const handleAddProduct = (data) => {
-                const product = { id: Date.now().toString(), ...data, publisherId: PUBLISHER_ID };
-                setProducts([...products, product]);
-                setShowAddForm(false);
-            };
+            const handleAddProduct = (data) => { const product = { id: Date.now().toString(), ...data, publisherId: PUBLISHER_ID }; setProducts([...products, product]); setShowAddForm(false); };
             const handleDeleteProduct = (id) => { if (window.confirm('Delete this product?')) setProducts(products.filter(p => p.id !== id)); };
 
             return (
@@ -705,21 +603,13 @@
                                 </div>
                                 {showAddForm && <ProductForm onSubmit={handleAddProduct} onCancel={() => setShowAddForm(false)} accentColor="indigo" />}
                                 <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
-                                    {myProducts.length === 0 ? (
-                                        <div className="p-12 text-center text-gray-500">You haven't added any products yet.</div>
-                                    ) : (
+                                    {myProducts.length === 0 ? (<div className="p-12 text-center text-gray-500">You haven't added any products yet.</div>) : (
                                         <table className="w-full text-left">
                                             <thead className="bg-gray-50"><tr><th className="p-4 text-sm font-semibold text-gray-600">Cover</th><th className="p-4 text-sm font-semibold text-gray-600">Name</th><th className="p-4 text-sm font-semibold text-gray-600">Category</th><th className="p-4 text-sm font-semibold text-gray-600">Price</th><th className="p-4 text-sm font-semibold text-gray-600">Action</th></tr></thead>
                                             <tbody>
                                                 {myProducts.map(p => (
                                                     <tr key={p.id} className="border-t hover:bg-gray-50">
-                                                        <td className="p-4">
-                                                            {p.image && p.image.startsWith('data:') ? (
-                                                                <img src={p.image} alt={p.name} className="w-10 h-10 object-contain rounded" />
-                                                            ) : (
-                                                                <span className="text-2xl">{p.image || '📦'}</span>
-                                                            )}
-                                                        </td>
+                                                        <td className="p-4">{p.image && p.image.startsWith('data:') ? (<img src={p.image} alt={p.name} className="w-10 h-10 object-contain rounded" />) : (<span className="text-2xl">{p.image || '📦'}</span>)}</td>
                                                         <td className="p-4"><div className="font-medium text-gray-900">{p.name}</div><div className="text-sm text-gray-500">{p.author}</div>{p.pdfName && <div className="text-xs text-purple-600 mt-1">PDF: {p.pdfName}</div>}</td>
                                                         <td className="p-4 capitalize text-sm text-gray-600">{p.category.replace('-', ' ')}</td>
                                                         <td className="p-4 font-medium text-gray-900">₦{p.price.toLocaleString()}</td>
@@ -735,9 +625,7 @@
                         {tab === 'sales' && (
                             <div>
                                 <h2 className="text-xl font-bold mb-4">My Sales History</h2>
-                                {myOrders.length === 0 ? (
-                                    <div className="bg-white p-12 rounded-xl border border-gray-200 text-center text-gray-500 shadow-sm"><div className="text-4xl mb-3"></div><p>No sales yet for your products.</p></div>
-                                ) : (
+                                {myOrders.length === 0 ? (<div className="bg-white p-12 rounded-xl border border-gray-200 text-center text-gray-500 shadow-sm"><div className="text-4xl mb-3"></div><p>No sales yet for your products.</p></div>) : (
                                     <div className="space-y-4">
                                         {myOrders.map(order => {
                                             const myItems = order.items.filter(i => myProductIds.includes(i.id));
@@ -750,9 +638,7 @@
                                                     </div>
                                                     <div className="text-sm text-gray-600 mb-4 bg-gray-50 p-3 rounded-lg"><p className="mb-1">📍 {order.customer.address}</p><p>📞 {order.customer.phone}</p></div>
                                                     <div className="border-t pt-3 space-y-1">
-                                                        {myItems.map((item, idx) => (
-                                                            <div key={idx} className="flex justify-between text-sm"><span className="text-gray-700">{item.quantity}x {item.name}</span><span className="font-medium text-gray-900">{(item.price * item.quantity).toLocaleString()}</span></div>
-                                                        ))}
+                                                        {myItems.map((item, idx) => (<div key={idx} className="flex justify-between text-sm"><span className="text-gray-700">{item.quantity}x {item.name}</span><span className="font-medium text-gray-900">₦{(item.price * item.quantity).toLocaleString()}</span></div>))}
                                                     </div>
                                                 </div>
                                             );
@@ -771,6 +657,7 @@
             const [isAdminAuth, setIsAdminAuth] = useState(false);
             const [isPubAuth, setIsPubAuth] = useState(false);
             const [cart, setCart] = useState([]);
+            const [shopCategory, setShopCategory] = useState('all'); // NEW STATE for category filtering
             
             const [products, setProducts] = useState(() => {
                 const saved = localStorage.getItem('a1_products_v4');
@@ -811,8 +698,9 @@
             return (
                 <div className="min-h-screen bg-gray-50">
                     {page !== 'admin-login' && page !== 'publisher-login' && page !== 'publisher-register' && <Navbar currentPage={page} setPage={setPage} cartCount={cartCount} />}
-                    {page === 'home' && <Home setPage={setPage} products={products} />}
-                    {page === 'shop' && <Shop addToCart={addToCart} products={products} />}
+                    {/* UPDATED: Passing setShopCategory to Home and shopCategory to Shop */}
+                    {page === 'home' && <Home setPage={setPage} products={products} setShopCategory={setShopCategory} />}
+                    {page === 'shop' && <Shop addToCart={addToCart} products={products} defaultCategory={shopCategory} />}
                     {page === 'cart' && <Cart cart={cart} removeFromCart={removeFromCart} updateQuantity={updateQuantity} onCheckout={handleCheckout} />}
                     
                     {page === 'admin-login' && <LoginGate title="Admin Access Only" password={ADMIN_PASSWORD} onLogin={() => { setIsAdminAuth(true); setPage('admin'); }} setPage={setPage} themeColor="amber" />}
