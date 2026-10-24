@@ -28,23 +28,25 @@
         const { useState, useEffect, useRef } = React;
 
         const ADMIN_PASSWORD = "admin123";
-        const PUBLISHER_PASSWORD = "seller123";
-        const PUBLISHER_ID = "pub-1";
         const ADMIN_PHONE = "2348140730041";
+
+        const defaultPublishers = [
+            { id: 'pub-1', name: 'TechPress Publishing', email: 'publisher@techpress.com', password: 'pub123', phone: '08012345678' }
+        ];
 
         const defaultProducts = [
             { id: '1', name: 'The Art of Programming', author: 'Donald Knuth', price: 45000, stock: 15, category: 'physical-books', image: '📘', publisherId: 'admin' },
-            { id: '2', name: 'Modern Web Development', author: 'Sarah Chen', price: 38500, stock: 999, category: 'ebooks', image: '📱', publisherId: 'admin' },
+            { id: '2', name: 'Modern Web Development', author: 'Sarah Chen', price: 38500, stock: 999, category: 'ebooks', image: '📱', publisherId: 'pub-1' },
             { id: '3', name: 'Design Thinking', author: 'Tim Brown', price: 32000, stock: 8, category: 'physical-books', image: '📙', publisherId: 'admin' },
-            { id: '4', name: 'The Great Novel (Audio)', author: 'James Mitchell', price: 19900, stock: 999, category: 'audiobooks', image: '🎧', publisherId: 'admin' },
+            { id: '4', name: 'The Great Novel (Audio)', author: 'James Mitchell', price: 19900, stock: 999, category: 'audiobooks', image: '🎧', publisherId: 'pub-1' },
             { id: '5', name: 'Science of Everything', author: 'Dr. Emily Park', price: 29900, stock: 0, category: 'physical-books', image: '🔬', publisherId: 'admin' },
             { id: '6', name: 'Premium Notebook Set', author: 'A1 Stationery', price: 18900, stock: 45, category: 'stationery', image: '📓', publisherId: 'admin' },
             { id: '7', name: 'Fine Tip Pen Collection', author: 'A1 Stationery', price: 12500, stock: 120, category: 'stationery', image: '🖊️', publisherId: 'admin' },
             { id: '8', name: 'Artist Sketch Pad', author: 'A1 Stationery', price: 22000, stock: 30, category: 'art-supplies', image: '🎨', publisherId: 'admin' },
             { id: '9', name: 'Wooden Desk Organizer', author: 'A1 Stationery', price: 34900, stock: 12, category: 'office-supplies', image: '🗂️', publisherId: 'admin' },
             { id: '10', name: 'Colored Marker Set (24pc)', author: 'A1 Stationery', price: 28000, stock: 0, category: 'art-supplies', image: '🖍️', publisherId: 'admin' },
-            { id: '11', name: 'Mindful Living', author: 'Anna Roberts', price: 14900, stock: 999, category: 'ebooks', image: '🧘', publisherId: 'admin' },
-            { id: '12', name: 'Tech Monthly (December)', author: 'TechPress', price: 6900, stock: 50, category: 'magazines', image: '📰', publisherId: 'admin' },
+            { id: '11', name: 'Mindful Living', author: 'Anna Roberts', price: 14900, stock: 999, category: 'ebooks', image: '🧘', publisherId: 'pub-1' },
+            { id: '12', name: 'Tech Monthly (December)', author: 'TechPress', price: 6900, stock: 50, category: 'magazines', image: '📰', publisherId: 'pub-1' },
         ];
 
         const categories = ['all', 'physical-books', 'ebooks', 'audiobooks', 'stationery', 'art-supplies', 'office-supplies', 'magazines'];
@@ -473,6 +475,49 @@
             );
         }
 
+        function PublisherLogin({ publishers, onLogin, setPage }) {
+            const [email, setEmail] = useState('');
+            const [password, setPassword] = useState('');
+            const [error, setError] = useState('');
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                const pub = publishers.find(p => p.email.toLowerCase() === email.toLowerCase() && p.password === password);
+                if (pub) {
+                    onLogin(pub.id);
+                } else {
+                    setError('Invalid email or password. Please contact admin if you forgot your credentials.');
+                }
+            };
+
+            return (
+                <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
+                    <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full">
+                        <div className="text-center mb-6">
+                            <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <svg className="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                            </div>
+                            <h2 className="text-2xl font-bold text-gray-900">Publisher Portal</h2>
+                            <p className="text-sm text-gray-500 mt-2">Enter your credentials to continue</p>
+                        </div>
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                                <input type="email" value={email} onChange={e => { setEmail(e.target.value); setError(''); }} className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none" placeholder="publisher@example.com" autoFocus required />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                                <input type="password" value={password} onChange={e => { setPassword(e.target.value); setError(''); }} className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none" placeholder="••••••••" required />
+                            </div>
+                            {error && <div className="bg-red-50 text-red-600 text-sm p-3 rounded-xl text-center">{error}</div>}
+                            <button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl font-bold transition-colors">Sign In</button>
+                            <button type="button" onClick={() => setPage('home')} className="w-full text-gray-500 text-sm hover:text-gray-700 py-2">Back to Website</button>
+                        </form>
+                    </div>
+                </div>
+            );
+        }
+
         function PublisherRegister({ setPage }) {
             const [form, setForm] = useState({ name: '', email: '', phone: '', businessName: '', products: '', message: '' });
             const handleSubmit = (e) => {
@@ -518,12 +563,28 @@
             );
         }
 
-        function Admin({ products, setProducts, orders, setOrders, setPage }) {
+        function Admin({ products, setProducts, orders, setOrders, publishers, setPublishers, setPage }) {
             const [tab, setTab] = useState('products');
             const [showAddForm, setShowAddForm] = useState(false);
+            const [showAddPublisher, setShowAddPublisher] = useState(false);
+            const [newPublisher, setNewPublisher] = useState({ name: '', email: '', phone: '', password: '' });
+
             const handleAddProduct = (data) => { const product = { id: Date.now().toString(), ...data, publisherId: 'admin' }; setProducts([...products, product]); setShowAddForm(false); };
             const handleDeleteProduct = (id) => { if (window.confirm('Delete this product?')) setProducts(products.filter(p => p.id !== id)); };
             const handleClearOrders = () => { if (window.confirm('Clear all order history?')) setOrders([]); };
+            
+            const handleAddPublisher = (e) => {
+                e.preventDefault();
+                const pub = { id: 'pub-' + Date.now(), ...newPublisher };
+                setPublishers([...publishers, pub]);
+                setNewPublisher({ name: '', email: '', phone: '', password: '' });
+                setShowAddPublisher(false);
+            };
+            const handleDeletePublisher = (id) => {
+                if (window.confirm('Delete this publisher? Their existing products will remain in the system, but they will no longer be able to log in.')) {
+                    setPublishers(publishers.filter(p => p.id !== id));
+                }
+            };
 
             return (
                 <div className="min-h-screen bg-gray-50 py-12">
@@ -532,10 +593,12 @@
                             <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
                             <button onClick={() => setPage('home')} className="text-amber-600 hover:underline font-medium">Back to Site</button>
                         </div>
-                        <div className="flex gap-4 mb-6 border-b border-gray-200">
-                            <button onClick={() => setTab('products')} className={`pb-2 px-4 font-medium ${tab === 'products' ? 'border-b-2 border-amber-600 text-amber-600' : 'text-gray-500'}`}>Manage Products</button>
-                            <button onClick={() => setTab('orders')} className={`pb-2 px-4 font-medium ${tab === 'orders' ? 'border-b-2 border-amber-600 text-amber-600' : 'text-gray-500'}`}>View Orders ({orders.length})</button>
+                        <div className="flex gap-4 mb-6 border-b border-gray-200 overflow-x-auto">
+                            <button onClick={() => setTab('products')} className={`pb-2 px-4 font-medium whitespace-nowrap ${tab === 'products' ? 'border-b-2 border-amber-600 text-amber-600' : 'text-gray-500'}`}>Manage Products</button>
+                            <button onClick={() => setTab('orders')} className={`pb-2 px-4 font-medium whitespace-nowrap ${tab === 'orders' ? 'border-b-2 border-amber-600 text-amber-600' : 'text-gray-500'}`}>View Orders ({orders.length})</button>
+                            <button onClick={() => setTab('publishers')} className={`pb-2 px-4 font-medium whitespace-nowrap ${tab === 'publishers' ? 'border-b-2 border-amber-600 text-amber-600' : 'text-gray-500'}`}>Manage Publishers ({publishers.length})</button>
                         </div>
+                        
                         {tab === 'products' && (
                             <div>
                                 <div className="flex justify-between items-center mb-4">
@@ -562,6 +625,44 @@
                                 </div>
                             </div>
                         )}
+
+                        {tab === 'publishers' && (
+                            <div>
+                                <div className="flex justify-between items-center mb-4">
+                                    <h2 className="text-xl font-bold">Manage Publishers</h2>
+                                    <button onClick={() => setShowAddPublisher(!showAddPublisher)} className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 text-sm font-medium">+ Add Publisher</button>
+                                </div>
+                                {showAddPublisher && (
+                                    <form onSubmit={handleAddPublisher} className="bg-white p-6 rounded-xl border border-gray-200 mb-6 grid grid-cols-1 md:grid-cols-2 gap-4 shadow-sm">
+                                        <input required placeholder="Publisher Name / Business" value={newPublisher.name} onChange={e => setNewPublisher({...newPublisher, name: e.target.value})} className="border border-gray-300 p-3 rounded-lg outline-none focus:border-indigo-500" />
+                                        <input required type="email" placeholder="Email Address" value={newPublisher.email} onChange={e => setNewPublisher({...newPublisher, email: e.target.value})} className="border border-gray-300 p-3 rounded-lg outline-none focus:border-indigo-500" />
+                                        <input required placeholder="Phone Number" value={newPublisher.phone} onChange={e => setNewPublisher({...newPublisher, phone: e.target.value})} className="border border-gray-300 p-3 rounded-lg outline-none focus:border-indigo-500" />
+                                        <input required placeholder="Login Password" value={newPublisher.password} onChange={e => setNewPublisher({...newPublisher, password: e.target.value})} className="border border-gray-300 p-3 rounded-lg outline-none focus:border-indigo-500" />
+                                        <div className="flex gap-3 md:col-span-2">
+                                            <button type="button" onClick={() => setShowAddPublisher(false)} className="flex-1 border border-gray-300 text-gray-700 p-3 rounded-lg hover:bg-gray-50">Cancel</button>
+                                            <button type="submit" className="flex-1 bg-green-600 text-white p-3 rounded-lg hover:bg-green-700 font-medium">Create Publisher</button>
+                                        </div>
+                                    </form>
+                                )}
+                                <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+                                    <table className="w-full text-left">
+                                        <thead className="bg-gray-50"><tr><th className="p-4 text-sm font-semibold text-gray-600">Name</th><th className="p-4 text-sm font-semibold text-gray-600">Email</th><th className="p-4 text-sm font-semibold text-gray-600">Phone</th><th className="p-4 text-sm font-semibold text-gray-600">Password</th><th className="p-4 text-sm font-semibold text-gray-600">Action</th></tr></thead>
+                                        <tbody>
+                                            {publishers.map(p => (
+                                                <tr key={p.id} className="border-t hover:bg-gray-50">
+                                                    <td className="p-4 font-medium text-gray-900">{p.name}</td>
+                                                    <td className="p-4 text-sm text-gray-600">{p.email}</td>
+                                                    <td className="p-4 text-sm text-gray-600">{p.phone}</td>
+                                                    <td className="p-4 text-sm text-gray-600 font-mono">{p.password}</td>
+                                                    <td className="p-4"><button onClick={() => handleDeletePublisher(p.id)} className="text-red-600 hover:text-red-800 text-sm font-medium bg-red-50 px-3 py-1.5 rounded-lg hover:bg-red-100 transition-colors">Delete</button></td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        )}
+
                         {tab === 'orders' && (
                             <div>
                                 <div className="flex justify-between items-center mb-4">
@@ -591,13 +692,15 @@
             );
         }
 
-        function Publisher({ products, setProducts, orders, setPage }) {
+        function Publisher({ products, setProducts, orders, currentPublisherId, setPage }) {
             const [tab, setTab] = useState('products');
             const [showAddForm, setShowAddForm] = useState(false);
-            const myProducts = products.filter(p => p.publisherId === PUBLISHER_ID);
+            
+            const myProducts = products.filter(p => p.publisherId === currentPublisherId);
             const myProductIds = myProducts.map(p => p.id);
             const myOrders = orders.filter(o => o.items.some(i => myProductIds.includes(i.id)));
-            const handleAddProduct = (data) => { const product = { id: Date.now().toString(), ...data, publisherId: PUBLISHER_ID }; setProducts([...products, product]); setShowAddForm(false); };
+            
+            const handleAddProduct = (data) => { const product = { id: Date.now().toString(), ...data, publisherId: currentPublisherId }; setProducts([...products, product]); setShowAddForm(false); };
             const handleDeleteProduct = (id) => { if (window.confirm('Delete this product?')) setProducts(products.filter(p => p.id !== id)); };
 
             return (
@@ -672,10 +775,14 @@
         function App() {
             const [page, setPage] = useState('home');
             const [isAdminAuth, setIsAdminAuth] = useState(false);
-            const [isPubAuth, setIsPubAuth] = useState(false);
+            const [currentPublisherId, setCurrentPublisherId] = useState(null);
             const [cart, setCart] = useState([]);
             const [shopCategory, setShopCategory] = useState('all');
             
+            const [publishers, setPublishers] = useState(() => {
+                const saved = localStorage.getItem('a1_publishers_v1');
+                return saved ? JSON.parse(saved) : defaultPublishers;
+            });
             const [products, setProducts] = useState(() => {
                 const saved = localStorage.getItem('a1_products_v4');
                 return saved ? JSON.parse(saved) : defaultProducts;
@@ -685,6 +792,7 @@
                 return saved ? JSON.parse(saved) : [];
             });
 
+            useEffect(() => { localStorage.setItem('a1_publishers_v1', JSON.stringify(publishers)); }, [publishers]);
             useEffect(() => { localStorage.setItem('a1_products_v4', JSON.stringify(products)); }, [products]);
             useEffect(() => { localStorage.setItem('a1_orders_v4', JSON.stringify(orders)); }, [orders]);
 
@@ -720,12 +828,12 @@
                     {page === 'cart' && <Cart cart={cart} removeFromCart={removeFromCart} updateQuantity={updateQuantity} onCheckout={handleCheckout} />}
                     
                     {page === 'admin-login' && <LoginGate title="Admin Access Only" password={ADMIN_PASSWORD} onLogin={() => { setIsAdminAuth(true); setPage('admin'); }} setPage={setPage} themeColor="amber" />}
-                    {page === 'admin' && isAdminAuth && <Admin products={products} setProducts={setProducts} orders={orders} setOrders={setOrders} setPage={setPage} />}
+                    {page === 'admin' && isAdminAuth && <Admin products={products} setProducts={setProducts} orders={orders} setOrders={setOrders} publishers={publishers} setPublishers={setPublishers} setPage={setPage} />}
                     {page === 'admin' && !isAdminAuth && <LoginGate title="Admin Access Only" password={ADMIN_PASSWORD} onLogin={() => setIsAdminAuth(true)} setPage={setPage} themeColor="amber" />}
 
-                    {page === 'publisher-login' && <LoginGate title="Publisher Portal" password={PUBLISHER_PASSWORD} onLogin={() => { setIsPubAuth(true); setPage('publisher'); }} setPage={setPage} themeColor="indigo" />}
-                    {page === 'publisher' && isPubAuth && <Publisher products={products} setProducts={setProducts} orders={orders} setPage={setPage} />}
-                    {page === 'publisher' && !isPubAuth && <LoginGate title="Publisher Portal" password={PUBLISHER_PASSWORD} onLogin={() => setIsPubAuth(true)} setPage={setPage} themeColor="indigo" />}
+                    {page === 'publisher-login' && <PublisherLogin publishers={publishers} onLogin={(id) => { setCurrentPublisherId(id); setPage('publisher'); }} setPage={setPage} />}
+                    {page === 'publisher' && currentPublisherId && <Publisher products={products} setProducts={setProducts} orders={orders} currentPublisherId={currentPublisherId} setPage={setPage} />}
+                    {page === 'publisher' && !currentPublisherId && <PublisherLogin publishers={publishers} onLogin={(id) => { setCurrentPublisherId(id); setPage('publisher'); }} setPage={setPage} />}
 
                     {page === 'publisher-register' && <PublisherRegister setPage={setPage} />}
 
