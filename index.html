@@ -40,7 +40,7 @@
             { id: '1', name: 'The Art of Programming', author: 'Donald Knuth', price: 45000, category: 'physical-books', image: '📘', publisherId: 'admin' },
             { id: '2', name: 'Modern Web Development', author: 'Sarah Chen', price: 38500, category: 'ebooks', image: '📱', publisherId: 'admin' },
             { id: '3', name: 'Design Thinking', author: 'Tim Brown', price: 32000, category: 'physical-books', image: '📙', publisherId: 'admin' },
-            { id: '4', name: 'The Great Novel (Audio)', author: 'James Mitchell', price: 19900, category: 'audiobooks', image: '', publisherId: 'admin' },
+            { id: '4', name: 'The Great Novel (Audio)', author: 'James Mitchell', price: 19900, category: 'audiobooks', image: '🎧', publisherId: 'admin' },
             { id: '5', name: 'Science of Everything', author: 'Dr. Emily Park', price: 29900, category: 'physical-books', image: '🔬', publisherId: 'admin' },
             { id: '6', name: 'Premium Notebook Set', author: 'A1 Stationery', price: 18900, category: 'stationery', image: '📓', publisherId: 'admin' },
             { id: '7', name: 'Fine Tip Pen Collection', author: 'A1 Stationery', price: 12500, category: 'stationery', image: '🖊️', publisherId: 'admin' },
@@ -111,7 +111,6 @@
             );
         }
 
-        // UPDATED HOME COMPONENT: Added setShopCategory prop and click handlers
         function Home({ setPage, products, setShopCategory }) {
             const featured = products.slice(0, 3);
             return (
@@ -138,7 +137,6 @@
                         </div>
                     </section>
 
-                    {/* UPDATED WHAT WE OFFER SECTION: Added onClick handlers and cursor-pointer */}
                     <section className="py-20 bg-gray-50/50">
                         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                             <div className="text-center mb-12">
@@ -172,12 +170,12 @@
                                             {product.image && product.image.startsWith('data:') ? (
                                                 <img src={product.image} alt={product.name} className="max-h-24 object-contain" />
                                             ) : (
-                                                <span className="text-5xl">{product.image || ''}</span>
+                                                <span className="text-5xl">{product.image || '📦'}</span>
                                             )}
                                         </div>
                                         <h3 className="font-semibold text-gray-900 text-lg mb-1">{product.name}</h3>
                                         <p className="text-sm text-gray-500 mb-3">by {product.author}</p>
-                                        <span className="text-lg font-bold text-amber-600">{product.price.toLocaleString()}</span>
+                                        <span className="text-lg font-bold text-amber-600">₦{product.price.toLocaleString()}</span>
                                     </div>
                                 ))}
                             </div>
@@ -202,17 +200,21 @@
                                 <p className="text-gray-500">We're here to help you find what you need</p>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                <a href="tel:+2348140730041" className="flex items-center gap-4 p-5 rounded-2xl bg-gray-50 hover:bg-amber-50 transition-colors">
-                                    <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm"><span className="text-xl">📞</span></div>
+                                <a href="tel:+2348140730041" className="flex items-center gap-4 p-5 rounded-2xl bg-gray-50 hover:bg-amber-50 transition-colors group">
+                                    <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow"><span className="text-xl">📞</span></div>
                                     <div><p className="text-xs text-gray-500 mb-0.5">Call Us</p><p className="font-semibold text-gray-900">+234 814 073 0041</p></div>
                                 </a>
                                 <div className="flex items-center gap-4 p-5 rounded-2xl bg-gray-50">
                                     <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm"><span className="text-xl">🕐</span></div>
                                     <div><p className="text-xs text-gray-500 mb-0.5">Open Hours</p><p className="font-semibold text-gray-900 text-sm">Mon–Sat: 8AM – 6PM</p></div>
                                 </div>
-                                <a href="https://www.google.com/maps/search/Ibadan-Abeokuta+Road+Apata+Ibadan" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 p-5 rounded-2xl bg-gray-50 hover:bg-amber-50 transition-colors">
-                                    <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm"><span className="text-xl">📍</span></div>
-                                    <div><p className="text-xs text-gray-500 mb-0.5">Visit Us</p><p className="font-semibold text-gray-900 text-sm">Ibadan-Abeokuta Rd, Apata</p></div>
+                                <a href="https://www.google.com/maps/dir//A-One+Bookshop+%26+Stationery,+Ibadan-Abeokuta+Rd,+Apata,+Ibadan+200131,+Oyo/@6.5536,3.244032,12z/data=!4m8!4m7!1m0!1m5!1m1!1s0x10398c8153b01b61:0x660c211197d2e0f3!2m2!1d3.8298805!2d7.3834856?hl=en&entry=ttu&g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener noreferrer" className="flex items-start gap-4 p-5 rounded-2xl bg-gray-50 hover:bg-amber-50 transition-colors group">
+                                    <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow flex-shrink-0"><span className="text-xl">📍</span></div>
+                                    <div>
+                                        <p className="text-xs text-gray-500 mb-0.5">Visit Us</p>
+                                        <p className="font-semibold text-gray-900 text-sm leading-tight">Shop 2, Alapinni House, Opposite FRSC/License Office, Ibadan-Abeokuta Road, Apata, Ibadan, Oyo State, Nigeria.</p>
+                                        <p className="text-xs text-amber-600 mt-1.5 font-medium">Get Directions →</p>
+                                    </div>
                                 </a>
                             </div>
                         </div>
@@ -232,12 +234,10 @@
             );
         }
 
-        // UPDATED SHOP COMPONENT: Added defaultCategory prop
         function Shop({ addToCart, products, defaultCategory }) {
             const [search, setSearch] = useState('');
             const [activeCategory, setActiveCategory] = useState(defaultCategory || 'all');
 
-            // If the user clicks a category from Home, update the shop filter
             useEffect(() => {
                 setActiveCategory(defaultCategory || 'all');
             }, [defaultCategory]);
@@ -335,7 +335,7 @@
                                 </div>
                                 <div className="mt-6 pt-4 border-t border-gray-200 flex justify-between items-center">
                                     <span className="text-lg font-bold text-gray-900">Total:</span>
-                                    <span className="text-2xl font-bold text-amber-600">{total.toLocaleString()}</span>
+                                    <span className="text-2xl font-bold text-amber-600">₦{total.toLocaleString()}</span>
                                 </div>
                             </div>
                             <div className="bg-white rounded-2xl border border-gray-100 p-6 h-fit">
@@ -534,7 +534,7 @@
                                         <tbody>
                                             {products.map(p => (
                                                 <tr key={p.id} className="border-t hover:bg-gray-50">
-                                                    <td className="p-4">{p.image && p.image.startsWith('data:') ? (<img src={p.image} alt={p.name} className="w-10 h-10 object-contain rounded" />) : (<span className="text-2xl">{p.image || ''}</span>)}</td>
+                                                    <td className="p-4">{p.image && p.image.startsWith('data:') ? (<img src={p.image} alt={p.name} className="w-10 h-10 object-contain rounded" />) : (<span className="text-2xl">{p.image || '📦'}</span>)}</td>
                                                     <td className="p-4"><div className="font-medium text-gray-900">{p.name}</div><div className="text-sm text-gray-500">{p.author}</div>{p.pdfName && <div className="text-xs text-purple-600 mt-1">PDF: {p.pdfName}</div>}</td>
                                                     <td className="p-4 capitalize text-sm text-gray-600">{p.category.replace('-', ' ')}</td>
                                                     <td className="p-4 font-medium text-gray-900">₦{p.price.toLocaleString()}</td>
@@ -625,7 +625,7 @@
                         {tab === 'sales' && (
                             <div>
                                 <h2 className="text-xl font-bold mb-4">My Sales History</h2>
-                                {myOrders.length === 0 ? (<div className="bg-white p-12 rounded-xl border border-gray-200 text-center text-gray-500 shadow-sm"><div className="text-4xl mb-3"></div><p>No sales yet for your products.</p></div>) : (
+                                {myOrders.length === 0 ? (<div className="bg-white p-12 rounded-xl border border-gray-200 text-center text-gray-500 shadow-sm"><div className="text-4xl mb-3">📊</div><p>No sales yet for your products.</p></div>) : (
                                     <div className="space-y-4">
                                         {myOrders.map(order => {
                                             const myItems = order.items.filter(i => myProductIds.includes(i.id));
@@ -657,7 +657,7 @@
             const [isAdminAuth, setIsAdminAuth] = useState(false);
             const [isPubAuth, setIsPubAuth] = useState(false);
             const [cart, setCart] = useState([]);
-            const [shopCategory, setShopCategory] = useState('all'); // NEW STATE for category filtering
+            const [shopCategory, setShopCategory] = useState('all');
             
             const [products, setProducts] = useState(() => {
                 const saved = localStorage.getItem('a1_products_v4');
@@ -698,7 +698,6 @@
             return (
                 <div className="min-h-screen bg-gray-50">
                     {page !== 'admin-login' && page !== 'publisher-login' && page !== 'publisher-register' && <Navbar currentPage={page} setPage={setPage} cartCount={cartCount} />}
-                    {/* UPDATED: Passing setShopCategory to Home and shopCategory to Shop */}
                     {page === 'home' && <Home setPage={setPage} products={products} setShopCategory={setShopCategory} />}
                     {page === 'shop' && <Shop addToCart={addToCart} products={products} defaultCategory={shopCategory} />}
                     {page === 'cart' && <Cart cart={cart} removeFromCart={removeFromCart} updateQuantity={updateQuantity} onCheckout={handleCheckout} />}
