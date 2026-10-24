@@ -18,18 +18,19 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useEffect } = React;
+        const { useState, useEffect, useRef } = React;
 
         const ADMIN_PASSWORD = "admin123";
         const PUBLISHER_PASSWORD = "seller123";
-        const PUBLISHER_ID = "pub-1"; // Simulated logged-in publisher ID
+        const PUBLISHER_ID = "pub-1";
+        const ADMIN_PHONE = "2348140730041";
 
         const defaultProducts = [
             { id: '1', name: 'The Art of Programming', author: 'Donald Knuth', price: 45000, category: 'physical-books', image: '📘', publisherId: 'admin' },
             { id: '2', name: 'Modern Web Development', author: 'Sarah Chen', price: 38500, category: 'ebooks', image: '📱', publisherId: 'admin' },
             { id: '3', name: 'Design Thinking', author: 'Tim Brown', price: 32000, category: 'physical-books', image: '📙', publisherId: 'admin' },
-            { id: '4', name: 'The Great Novel (Audio)', author: 'James Mitchell', price: 19900, category: 'audiobooks', image: '', publisherId: 'admin' },
-            { id: '5', name: 'Science of Everything', author: 'Dr. Emily Park', price: 29900, category: 'physical-books', image: '🔬', publisherId: 'admin' },
+            { id: '4', name: 'The Great Novel (Audio)', author: 'James Mitchell', price: 19900, category: 'audiobooks', image: '🎧', publisherId: 'admin' },
+            { id: '5', name: 'Science of Everything', author: 'Dr. Emily Park', price: 29900, category: 'physical-books', image: '', publisherId: 'admin' },
             { id: '6', name: 'Premium Notebook Set', author: 'A1 Stationery', price: 18900, category: 'stationery', image: '📓', publisherId: 'admin' },
             { id: '7', name: 'Fine Tip Pen Collection', author: 'A1 Stationery', price: 12500, category: 'stationery', image: '🖊️', publisherId: 'admin' },
             { id: '8', name: 'Artist Sketch Pad', author: 'A1 Stationery', price: 22000, category: 'art-supplies', image: '🎨', publisherId: 'admin' },
@@ -42,9 +43,29 @@
         const categories = ['all', 'physical-books', 'ebooks', 'audiobooks', 'stationery', 'art-supplies', 'office-supplies', 'magazines'];
         const categoryLabels = { 'all': 'All Items', 'physical-books': 'Physical Books', 'ebooks': 'E-Books', 'audiobooks': 'Audiobooks', 'stationery': 'Stationery', 'art-supplies': 'Art Supplies', 'office-supplies': 'Office', 'magazines': 'Magazines' };
 
+        // SVG Icons for "What We Offer"
+        const categoryIcons = {
+            'physical-books': <svg className="w-10 h-10 text-blue-500" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>,
+            'ebooks': <svg className="w-10 h-10 text-purple-500" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3"/></svg>,
+            'audiobooks': <svg className="w-10 h-10 text-pink-500" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z"/></svg>,
+            'magazines': <svg className="w-10 h-10 text-gray-600" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 01-2.25 2.25M16.5 7.5V18a2.25 2.25 0 002.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 002.25 2.25h13.5M6 7.5h3v3H6v-3z"/></svg>,
+            'stationery': <svg className="w-10 h-10 text-orange-500" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"/></svg>,
+            'art-supplies': <svg className="w-10 h-10 text-rose-500" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42"/></svg>,
+            'office-supplies': <svg className="w-10 h-10 text-teal-600" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"/></svg>,
+        };
+        const categoryDescriptions = {
+            'physical-books': 'Hardcover & paperback',
+            'ebooks': 'Instant digital access',
+            'audiobooks': 'Listen anywhere',
+            'magazines': 'Weekly & monthly',
+            'stationery': 'Pens, notebooks & more',
+            'art-supplies': 'For creative minds',
+            'office-supplies': 'Desk essentials',
+        };
+
         function WhatsAppButton() {
             return (
-                <a href="https://wa.me/2348140730041?text=Hello!%20I%20would%20like%20to%20inquire%20about%20your%20products." target="_blank" rel="noopener noreferrer" className="fixed bottom-6 right-6 z-50 group">
+                <a href={`https://wa.me/${ADMIN_PHONE}?text=Hello!%20I%20would%20like%20to%20inquire%20about%20your%20products.`} target="_blank" rel="noopener noreferrer" className="fixed bottom-6 right-6 z-50 group">
                     <div className="relative">
                         <div className="absolute inset-0 bg-green-500 rounded-full animate-ping opacity-20"></div>
                         <div className="relative w-14 h-14 bg-green-500 rounded-full flex items-center justify-center shadow-lg hover:bg-green-600 hover:scale-110 transition-all duration-300">
@@ -87,23 +108,49 @@
                     <section className="relative overflow-hidden bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
                         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-36">
                             <div className="max-w-2xl">
-                                <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full text-sm text-amber-700 font-medium mb-6 shadow-sm">✨ Serving Ibadan with Quality Books & Stationery</div>
+                                <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full text-sm text-amber-700 font-medium mb-6 shadow-sm">Serving Ibadan with Quality Books & Stationery</div>
                                 <h1 className="text-5xl md:text-6xl font-bold text-gray-900 leading-tight mb-6">Your Trusted <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-600 to-orange-600">Bookshop</span></h1>
                                 <p className="text-lg text-gray-600 mb-8 leading-relaxed">Welcome to <strong>A-One Bookshop & Stationery</strong> — Ibadan's destination for physical books, e-books, audiobooks, and premium stationery.</p>
                                 <div className="flex flex-wrap gap-4">
-                                    <button onClick={() => setPage('shop')} className="inline-flex items-center gap-2 bg-amber-600 text-white px-7 py-3.5 rounded-full font-medium hover:bg-amber-700 transition-all hover:shadow-lg">Browse Collection →</button>
-                                    <a href="https://wa.me/2348140730041" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-green-600 text-white px-7 py-3.5 rounded-full font-medium hover:bg-green-700 transition-all hover:shadow-lg">Chat on WhatsApp</a>
+                                    <button onClick={() => setPage('shop')} className="inline-flex items-center gap-2 bg-amber-600 text-white px-7 py-3.5 rounded-full font-medium hover:bg-amber-700 transition-all hover:shadow-lg">Browse Collection</button>
+                                    <a href={`https://wa.me/${ADMIN_PHONE}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-green-600 text-white px-7 py-3.5 rounded-full font-medium hover:bg-green-700 transition-all hover:shadow-lg">Chat on WhatsApp</a>
                                 </div>
                             </div>
                         </div>
                     </section>
+
+                    {/* WHAT WE OFFER SECTION */}
                     <section className="py-20 bg-gray-50/50">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div className="text-center mb-12">
+                                <h2 className="text-4xl font-bold text-gray-900 mb-3">What We Offer</h2>
+                                <p className="text-gray-500 max-w-2xl mx-auto text-lg">From physical books to digital content — everything for the modern reader and creator.</p>
+                            </div>
+                            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
+                                {Object.keys(categoryDescriptions).map(cat => (
+                                    <div key={cat} className="bg-white rounded-2xl p-5 border border-gray-100 hover:shadow-md transition-all text-center hover:-translate-y-1">
+                                        <div className="flex justify-center mb-3">{categoryIcons[cat]}</div>
+                                        <h3 className="font-semibold text-gray-900 text-sm mb-1">{categoryLabels[cat]}</h3>
+                                        <p className="text-xs text-gray-400">{categoryDescriptions[cat]}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </section>
+
+                    <section className="py-20 bg-white">
                         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                             <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Featured Products</h2>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 {featured.map(product => (
                                     <div key={product.id} className="bg-white rounded-2xl p-6 border border-gray-100 hover:shadow-lg transition-all">
-                                        <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-6 flex items-center justify-center mb-4"><span className="text-5xl">{product.image}</span></div>
+                                        <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-6 flex items-center justify-center mb-4 min-h-[120px]">
+                                            {product.image && product.image.startsWith('data:') ? (
+                                                <img src={product.image} alt={product.name} className="max-h-24 object-contain" />
+                                            ) : (
+                                                <span className="text-5xl">{product.image || ''}</span>
+                                            )}
+                                        </div>
                                         <h3 className="font-semibold text-gray-900 text-lg mb-1">{product.name}</h3>
                                         <p className="text-sm text-gray-500 mb-3">by {product.author}</p>
                                         <span className="text-lg font-bold text-amber-600">₦{product.price.toLocaleString()}</span>
@@ -112,6 +159,19 @@
                             </div>
                         </div>
                     </section>
+
+                    {/* PUBLISHER CTA SECTION */}
+                    <section className="py-20 bg-gradient-to-br from-purple-50 to-indigo-50">
+                        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                            <h2 className="text-4xl font-bold text-gray-900 mb-4">Are You a Publisher or Seller?</h2>
+                            <p className="text-gray-600 max-w-2xl mx-auto text-lg mb-8">Join our marketplace and reach readers across Ibadan. List your books, e-books, audiobooks, or stationery products today.</p>
+                            <button onClick={() => setPage('publisher-register')} className="inline-flex items-center gap-2 bg-purple-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-purple-700 transition-all hover:shadow-lg hover:scale-105">
+                                Become a Publisher
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                            </button>
+                        </div>
+                    </section>
+
                     <section className="py-16 bg-white border-t border-gray-100">
                         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
                             <div className="text-center mb-10">
@@ -134,6 +194,7 @@
                             </div>
                         </div>
                     </section>
+
                     <footer className="bg-gray-900 text-white py-12">
                         <div className="max-w-7xl mx-auto px-4 text-center">
                             <p className="text-sm text-gray-400 mb-4">© 2026 A-One Bookshop & Stationery. All rights reserved.</p>
@@ -169,7 +230,13 @@
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                             {filtered.map(product => (
                                 <div key={product.id} className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl transition-all">
-                                    <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-8 flex items-center justify-center h-48"><span className="text-6xl">{product.image}</span></div>
+                                    <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-8 flex items-center justify-center h-48">
+                                        {product.image && product.image.startsWith('data:') ? (
+                                            <img src={product.image} alt={product.name} className="max-h-full object-contain" />
+                                        ) : (
+                                            <span className="text-6xl">{product.image || '📦'}</span>
+                                        )}
+                                    </div>
                                     <div className="p-5">
                                         <div className="text-xs font-semibold text-amber-600 uppercase tracking-wide mb-1">{categoryLabels[product.category]}</div>
                                         <h3 className="font-semibold text-gray-900 text-lg mb-1">{product.name}</h3>
@@ -220,7 +287,11 @@
                                     {cart.map(item => (
                                         <div key={item.id} className="flex items-center justify-between border-b border-gray-100 pb-4 last:border-0 last:pb-0">
                                             <div className="flex items-center gap-3">
-                                                <span className="text-2xl">{item.image}</span>
+                                                {item.image && item.image.startsWith('data:') ? (
+                                                    <img src={item.image} alt={item.name} className="w-12 h-12 object-contain rounded" />
+                                                ) : (
+                                                    <span className="text-2xl">{item.image || '📦'}</span>
+                                                )}
                                                 <div><p className="font-medium text-gray-900">{item.name}</p><p className="text-sm text-gray-500">₦{item.price.toLocaleString()}</p></div>
                                             </div>
                                             <div className="flex items-center gap-2">
@@ -255,6 +326,114 @@
             );
         }
 
+        // Reusable Add Product Form with File Upload
+        function ProductForm({ onSubmit, onCancel, accentColor = 'amber' }) {
+            const [form, setForm] = useState({ name: '', author: '', price: '', category: 'physical-books', image: '', pdfFile: null, pdfName: '' });
+            const [imagePreview, setImagePreview] = useState(null);
+            const fileInputRef = useRef(null);
+            const pdfInputRef = useRef(null);
+
+            const accentClasses = {
+                amber: 'focus:border-amber-500',
+                indigo: 'focus:border-indigo-500',
+            };
+            const btnClasses = {
+                amber: 'bg-amber-600 hover:bg-amber-700',
+                indigo: 'bg-indigo-600 hover:bg-indigo-700',
+            };
+
+            const handleImageUpload = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('Image is too large. Please use an image under 2MB.');
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    setImagePreview(ev.target.result);
+                    setForm({ ...form, image: ev.target.result });
+                };
+                reader.readAsDataURL(file);
+            };
+
+            const handlePdfUpload = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                if (file.size > 10 * 1024 * 1024) {
+                    alert('PDF is too large. Please use a file under 10MB.');
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    setForm({ ...form, pdfFile: ev.target.result, pdfName: file.name });
+                };
+                reader.readAsDataURL(file);
+            };
+
+            const isDigital = ['ebooks', 'audiobooks'].includes(form.category);
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                if (!form.name || !form.author || !form.price) return alert('Please fill in all required fields');
+                onSubmit({
+                    name: form.name,
+                    author: form.author,
+                    price: Number(form.price),
+                    category: form.category,
+                    image: form.image,
+                    pdfFile: form.pdfFile,
+                    pdfName: form.pdfName,
+                });
+            };
+
+            return (
+                <form onSubmit={handleSubmit} className="bg-white p-6 rounded-xl border border-gray-200 mb-6 grid grid-cols-1 md:grid-cols-2 gap-4 shadow-sm">
+                    <input required placeholder="Product Name" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} className={`border border-gray-300 p-3 rounded-lg outline-none ${accentClasses[accentColor]}`} />
+                    <input required placeholder="Author / Brand" value={form.author} onChange={e => setForm({ ...form, author: e.target.value })} className={`border border-gray-300 p-3 rounded-lg outline-none ${accentClasses[accentColor]}`} />
+                    <input required type="number" placeholder="Price (e.g., 15000)" value={form.price} onChange={e => setForm({ ...form, price: e.target.value })} className={`border border-gray-300 p-3 rounded-lg outline-none ${accentClasses[accentColor]}`} />
+                    <select value={form.category} onChange={e => setForm({ ...form, category: e.target.value, pdfFile: null, pdfName: '' })} className={`border border-gray-300 p-3 rounded-lg outline-none ${accentClasses[accentColor]} bg-white`}>
+                        {categories.filter(c => c !== 'all').map(cat => <option key={cat} value={cat}>{categoryLabels[cat]}</option>)}
+                    </select>
+
+                    {/* Cover Image Upload */}
+                    <div className="md:col-span-2 border border-dashed border-gray-300 rounded-lg p-4">
+                        <p className="text-sm font-medium text-gray-700 mb-2">Product Cover (Optional)</p>
+                        <div className="flex flex-col md:flex-row gap-3 items-start">
+                            <div className="flex-1">
+                                <p className="text-xs text-gray-500 mb-2">Option A: Upload an image (JPG/PNG, max 2MB)</p>
+                                <input type="file" accept="image/*" ref={fileInputRef} onChange={handleImageUpload} className="w-full text-sm text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200" />
+                            </div>
+                            <div className="flex-1">
+                                <p className="text-xs text-gray-500 mb-2">Option B: Use an emoji instead</p>
+                                <input placeholder="e.g., 📘 (leave empty if uploaded image)" value={form.image && !form.image.startsWith('data:') ? form.image : ''} onChange={e => { setForm({ ...form, image: e.target.value }); setImagePreview(null); }} className="w-full border border-gray-300 p-2 rounded-lg outline-none text-lg" />
+                            </div>
+                            {imagePreview && (
+                                <div className="w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden border border-gray-200">
+                                    <img src={imagePreview} alt="Preview" className="w-full h-full object-contain" />
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* PDF Upload for Digital Products */}
+                    {isDigital && (
+                        <div className="md:col-span-2 border border-dashed border-purple-300 bg-purple-50 rounded-lg p-4">
+                            <p className="text-sm font-medium text-purple-900 mb-2">Digital File Upload (PDF/MP3, max 10MB)</p>
+                            <p className="text-xs text-purple-700 mb-2">Customers will receive a download link via WhatsApp after purchase.</p>
+                            <input type="file" accept=".pdf,.mp3,.epub,.mobi" ref={pdfInputRef} onChange={handlePdfUpload} className="w-full text-sm text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-purple-100 file:text-purple-700 hover:file:bg-purple-200" />
+                            {form.pdfName && <p className="text-xs text-purple-700 mt-2">Selected: {form.pdfName}</p>}
+                        </div>
+                    )}
+
+                    <div className="flex gap-3 md:col-span-2">
+                        <button type="button" onClick={onCancel} className="flex-1 border border-gray-300 text-gray-700 p-3 rounded-lg hover:bg-gray-50">Cancel</button>
+                        <button type="submit" className={`flex-1 ${btnClasses[accentColor]} text-white p-3 rounded-lg font-medium`}>Save Product</button>
+                    </div>
+                </form>
+            );
+        }
+
         function LoginGate({ title, password, onLogin, setPage, themeColor }) {
             const [input, setInput] = useState('');
             const [error, setError] = useState('');
@@ -277,8 +456,59 @@
                             <input type="password" value={input} onChange={e => { setInput(e.target.value); setError(''); }} className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none text-center text-lg tracking-widest" placeholder="••••••••" autoFocus required />
                             {error && <div className="bg-red-50 text-red-600 text-sm p-3 rounded-xl text-center">{error}</div>}
                             <button type="submit" className={`w-full ${themeColor === 'amber' ? 'bg-amber-600 hover:bg-amber-700' : 'bg-indigo-600 hover:bg-indigo-700'} text-white py-3 rounded-xl font-bold transition-colors`}>Unlock Dashboard</button>
-                            <button type="button" onClick={() => setPage('home')} className="w-full text-gray-500 text-sm hover:text-gray-700 py-2">← Back to Website</button>
+                            <button type="button" onClick={() => setPage('home')} className="w-full text-gray-500 text-sm hover:text-gray-700 py-2">Back to Website</button>
                         </form>
+                    </div>
+                </div>
+            );
+        }
+
+        function PublisherRegister({ setPage }) {
+            const [form, setForm] = useState({ name: '', email: '', phone: '', businessName: '', products: '', message: '' });
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                if (!form.name || !form.phone) return alert('Please fill in your name and phone number');
+                let msg = `*New Publisher Registration Request*\n\n`;
+                msg += `*Name:* ${form.name}\n`;
+                msg += `*Email:* ${form.email || 'Not provided'}\n`;
+                msg += `*Phone:* ${form.phone}\n`;
+                msg += `*Business:* ${form.businessName || 'Not provided'}\n`;
+                msg += `*Products to sell:* ${form.products || 'Not specified'}\n\n`;
+                msg += `*Message:* ${form.message || 'I would like to become a publisher on A-One Bookshop.'}`;
+                window.open(`https://wa.me/${ADMIN_PHONE}?text=${encodeURIComponent(msg)}`, '_blank');
+                alert('Thank you! Your registration request has been sent. We will contact you shortly.');
+                setPage('home');
+            };
+            return (
+                <div className="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-50 py-12">
+                    <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="bg-white rounded-2xl shadow-xl p-8">
+                            <div className="text-center mb-8">
+                                <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+                                </div>
+                                <h1 className="text-3xl font-bold text-gray-900">Become a Publisher</h1>
+                                <p className="text-gray-500 mt-2">Fill out this form and we'll get back to you within 24 hours</p>
+                            </div>
+                            <form onSubmit={handleSubmit} className="space-y-4">
+                                <div><label className="block text-sm font-medium text-gray-700 mb-1">Full Name *</label><input type="text" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-purple-300 focus:ring-2 focus:ring-purple-100 outline-none" placeholder="Your full name" required /></div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div><label className="block text-sm font-medium text-gray-700 mb-1">Email</label><input type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-purple-300 focus:ring-2 focus:ring-purple-100 outline-none" placeholder="you@example.com" /></div>
+                                    <div><label className="block text-sm font-medium text-gray-700 mb-1">Phone Number *</label><input type="tel" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-purple-300 focus:ring-2 focus:ring-purple-100 outline-none" placeholder="08012345678" required /></div>
+                                </div>
+                                <div><label className="block text-sm font-medium text-gray-700 mb-1">Business / Brand Name</label><input type="text" value={form.businessName} onChange={e => setForm({ ...form, businessName: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-purple-300 focus:ring-2 focus:ring-purple-100 outline-none" placeholder="e.g., TechPress Publishing" /></div>
+                                <div><label className="block text-sm font-medium text-gray-700 mb-1">What do you want to sell? *</label><input type="text" value={form.products} onChange={e => setForm({ ...form, products: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-purple-300 focus:ring-2 focus:ring-purple-100 outline-none" placeholder="e.g., Physical books, E-books, Stationery..." required /></div>
+                                <div><label className="block text-sm font-medium text-gray-700 mb-1">Additional Message</label><textarea value={form.message} onChange={e => setForm({ ...form, message: e.target.value })} rows={3} className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-purple-300 focus:ring-2 focus:ring-purple-100 outline-none resize-none" placeholder="Tell us about your products..."></textarea></div>
+                                <div className="flex gap-3 pt-2">
+                                    <button type="button" onClick={() => setPage('home')} className="flex-1 border border-gray-300 text-gray-700 p-3 rounded-lg hover:bg-gray-50 font-medium">Cancel</button>
+                                    <button type="submit" className="flex-1 bg-purple-600 text-white p-3 rounded-lg hover:bg-purple-700 font-medium flex items-center justify-center gap-2">
+                                        <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M20.52 3.449C12.831-3.984.106 1.407.101 11.893c0 2.096.549 4.14 1.595 5.945L0 24l6.335-1.652c7.926 4.156 17.389-1.59 17.394-10.447 0-3.176-1.24-6.165-3.483-8.402l.274-.052zM12.056 21.785c-1.675-.001-3.314-.452-4.745-1.305l-.34-.202-3.514.918.952-3.427-.222-.352c-2.066-3.284-1.526-7.58.899-10.351 2.425-2.771 6.512-3.612 9.898-2.026 3.386 1.586 5.448 5.074 4.97 8.721-.478 3.648-3.546 6.524-7.234 6.624h-.664z"/></svg>
+                                        Send Request via WhatsApp
+                                    </button>
+                                </div>
+                                <p className="text-xs text-gray-500 text-center">Your details will be sent securely to the A-One Bookshop admin via WhatsApp.</p>
+                            </form>
+                        </div>
                     </div>
                 </div>
             );
@@ -287,13 +517,10 @@
         function Admin({ products, setProducts, orders, setOrders, setPage }) {
             const [tab, setTab] = useState('products');
             const [showAddForm, setShowAddForm] = useState(false);
-            const [newProduct, setNewProduct] = useState({ name: '', author: '', price: '', category: 'physical-books', image: '' });
 
-            const handleAddProduct = (e) => {
-                e.preventDefault();
-                const product = { id: Date.now().toString(), name: newProduct.name, author: newProduct.author, price: Number(newProduct.price), category: newProduct.category, image: newProduct.image, publisherId: 'admin' };
+            const handleAddProduct = (data) => {
+                const product = { id: Date.now().toString(), ...data, publisherId: 'admin' };
                 setProducts([...products, product]);
-                setNewProduct({ name: '', author: '', price: '', category: 'physical-books', image: '' });
                 setShowAddForm(false);
             };
             const handleDeleteProduct = (id) => { if (window.confirm('Delete this product?')) setProducts(products.filter(p => p.id !== id)); };
@@ -304,7 +531,7 @@
                     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="flex justify-between items-center mb-8">
                             <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-                            <button onClick={() => setPage('home')} className="text-amber-600 hover:underline font-medium">← Back to Site</button>
+                            <button onClick={() => setPage('home')} className="text-amber-600 hover:underline font-medium">Back to Site</button>
                         </div>
                         <div className="flex gap-4 mb-6 border-b border-gray-200">
                             <button onClick={() => setTab('products')} className={`pb-2 px-4 font-medium ${tab === 'products' ? 'border-b-2 border-amber-600 text-amber-600' : 'text-gray-500'}`}>Manage Products</button>
@@ -316,29 +543,21 @@
                                     <h2 className="text-xl font-bold">Product Inventory</h2>
                                     <button onClick={() => setShowAddForm(!showAddForm)} className="bg-amber-600 text-white px-4 py-2 rounded-lg hover:bg-amber-700 text-sm font-medium">+ Add New Product</button>
                                 </div>
-                                {showAddForm && (
-                                    <form onSubmit={handleAddProduct} className="bg-white p-6 rounded-xl border border-gray-200 mb-6 grid grid-cols-1 md:grid-cols-2 gap-4 shadow-sm">
-                                        <input required placeholder="Product Name" value={newProduct.name} onChange={e => setNewProduct({...newProduct, name: e.target.value})} className="border border-gray-300 p-3 rounded-lg outline-none focus:border-amber-500" />
-                                        <input required placeholder="Author / Brand" value={newProduct.author} onChange={e => setNewProduct({...newProduct, author: e.target.value})} className="border border-gray-300 p-3 rounded-lg outline-none focus:border-amber-500" />
-                                        <input required type="number" placeholder="Price (e.g., 15000)" value={newProduct.price} onChange={e => setNewProduct({...newProduct, price: e.target.value})} className="border border-gray-300 p-3 rounded-lg outline-none focus:border-amber-500" />
-                                        <select value={newProduct.category} onChange={e => setNewProduct({...newProduct, category: e.target.value})} className="border border-gray-300 p-3 rounded-lg outline-none focus:border-amber-500 bg-white">
-                                            {categories.filter(c => c !== 'all').map(cat => <option key={cat} value={cat}>{categoryLabels[cat]}</option>)}
-                                        </select>
-                                        <input required placeholder="Emoji Icon (e.g., 📘)" value={newProduct.image} onChange={e => setNewProduct({...newProduct, image: e.target.value})} className="border border-gray-300 p-3 rounded-lg outline-none focus:border-amber-500 md:col-span-2" />
-                                        <div className="flex gap-3 md:col-span-2">
-                                            <button type="button" onClick={() => setShowAddForm(false)} className="flex-1 border border-gray-300 text-gray-700 p-3 rounded-lg hover:bg-gray-50">Cancel</button>
-                                            <button type="submit" className="flex-1 bg-green-600 text-white p-3 rounded-lg hover:bg-green-700 font-medium">Save Product</button>
-                                        </div>
-                                    </form>
-                                )}
+                                {showAddForm && <ProductForm onSubmit={handleAddProduct} onCancel={() => setShowAddForm(false)} accentColor="amber" />}
                                 <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
                                     <table className="w-full text-left">
-                                        <thead className="bg-gray-50"><tr><th className="p-4 text-sm font-semibold text-gray-600">Icon</th><th className="p-4 text-sm font-semibold text-gray-600">Name</th><th className="p-4 text-sm font-semibold text-gray-600">Category</th><th className="p-4 text-sm font-semibold text-gray-600">Price</th><th className="p-4 text-sm font-semibold text-gray-600">Action</th></tr></thead>
+                                        <thead className="bg-gray-50"><tr><th className="p-4 text-sm font-semibold text-gray-600">Cover</th><th className="p-4 text-sm font-semibold text-gray-600">Name</th><th className="p-4 text-sm font-semibold text-gray-600">Category</th><th className="p-4 text-sm font-semibold text-gray-600">Price</th><th className="p-4 text-sm font-semibold text-gray-600">Action</th></tr></thead>
                                         <tbody>
                                             {products.map(p => (
                                                 <tr key={p.id} className="border-t hover:bg-gray-50">
-                                                    <td className="p-4 text-2xl">{p.image}</td>
-                                                    <td className="p-4"><div className="font-medium text-gray-900">{p.name}</div><div className="text-sm text-gray-500">{p.author}</div></td>
+                                                    <td className="p-4">
+                                                        {p.image && p.image.startsWith('data:') ? (
+                                                            <img src={p.image} alt={p.name} className="w-10 h-10 object-contain rounded" />
+                                                        ) : (
+                                                            <span className="text-2xl">{p.image || '📦'}</span>
+                                                        )}
+                                                    </td>
+                                                    <td className="p-4"><div className="font-medium text-gray-900">{p.name}</div><div className="text-sm text-gray-500">{p.author}</div>{p.pdfName && <div className="text-xs text-purple-600 mt-1">PDF: {p.pdfName}</div>}</td>
                                                     <td className="p-4 capitalize text-sm text-gray-600">{p.category.replace('-', ' ')}</td>
                                                     <td className="p-4 font-medium text-gray-900">₦{p.price.toLocaleString()}</td>
                                                     <td className="p-4"><button onClick={() => handleDeleteProduct(p.id)} className="text-red-600 hover:text-red-800 text-sm font-medium bg-red-50 px-3 py-1.5 rounded-lg hover:bg-red-100 transition-colors">Delete</button></td>
@@ -356,7 +575,7 @@
                                     {orders.length > 0 && <button onClick={handleClearOrders} className="text-red-600 text-sm hover:underline font-medium">Clear All History</button>}
                                 </div>
                                 {orders.length === 0 ? (
-                                    <div className="bg-white p-12 rounded-xl border border-gray-200 text-center text-gray-500 shadow-sm"><div className="text-4xl mb-3">📦</div><p>No orders yet.</p></div>
+                                    <div className="bg-white p-12 rounded-xl border border-gray-200 text-center text-gray-500 shadow-sm"><div className="text-4xl mb-3"></div><p>No orders yet.</p></div>
                                 ) : (
                                     <div className="space-y-4">
                                         {orders.map(order => (
@@ -365,7 +584,7 @@
                                                     <div><h3 className="font-bold text-lg text-gray-900">{order.customer.name}</h3><p className="text-sm text-gray-500">{order.date}</p></div>
                                                     <span className="bg-amber-100 text-amber-800 px-4 py-1.5 rounded-full text-sm font-bold">₦{order.total.toLocaleString()}</span>
                                                 </div>
-                                                <div className="text-sm text-gray-600 mb-4 bg-gray-50 p-3 rounded-lg"><p className="mb-1">📍 {order.customer.address}</p><p>📞 {order.customer.phone}</p></div>
+                                                <div className="text-sm text-gray-600 mb-4 bg-gray-50 p-3 rounded-lg"><p className="mb-1"> {order.customer.address}</p><p> {order.customer.phone}</p></div>
                                                 <div className="border-t pt-3 space-y-1">
                                                     {order.items.map((item, idx) => (
                                                         <div key={idx} className="flex justify-between text-sm"><span className="text-gray-700">{item.quantity}x {item.name}</span><span className="font-medium text-gray-900">₦{(item.price * item.quantity).toLocaleString()}</span></div>
@@ -385,17 +604,14 @@
         function Publisher({ products, setProducts, orders, setPage }) {
             const [tab, setTab] = useState('products');
             const [showAddForm, setShowAddForm] = useState(false);
-            const [newProduct, setNewProduct] = useState({ name: '', author: '', price: '', category: 'physical-books', image: '📘' });
 
             const myProducts = products.filter(p => p.publisherId === PUBLISHER_ID);
             const myProductIds = myProducts.map(p => p.id);
             const myOrders = orders.filter(o => o.items.some(i => myProductIds.includes(i.id)));
 
-            const handleAddProduct = (e) => {
-                e.preventDefault();
-                const product = { id: Date.now().toString(), name: newProduct.name, author: newProduct.author, price: Number(newProduct.price), category: newProduct.category, image: newProduct.image, publisherId: PUBLISHER_ID };
+            const handleAddProduct = (data) => {
+                const product = { id: Date.now().toString(), ...data, publisherId: PUBLISHER_ID };
                 setProducts([...products, product]);
-                setNewProduct({ name: '', author: '', price: '', category: 'physical-books', image: '📘' });
                 setShowAddForm(false);
             };
             const handleDeleteProduct = (id) => { if (window.confirm('Delete this product?')) setProducts(products.filter(p => p.id !== id)); };
@@ -405,7 +621,7 @@
                     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="flex justify-between items-center mb-8">
                             <h1 className="text-3xl font-bold text-gray-900">Publisher Dashboard</h1>
-                            <button onClick={() => setPage('home')} className="text-indigo-600 hover:underline font-medium">← Back to Site</button>
+                            <button onClick={() => setPage('home')} className="text-indigo-600 hover:underline font-medium">Back to Site</button>
                         </div>
                         <div className="flex gap-4 mb-6 border-b border-gray-200">
                             <button onClick={() => setTab('products')} className={`pb-2 px-4 font-medium ${tab === 'products' ? 'border-b-2 border-indigo-600 text-indigo-600' : 'text-gray-500'}`}>My Products</button>
@@ -417,32 +633,24 @@
                                     <h2 className="text-xl font-bold">My Inventory</h2>
                                     <button onClick={() => setShowAddForm(!showAddForm)} className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 text-sm font-medium">+ Add New Product</button>
                                 </div>
-                                {showAddForm && (
-                                    <form onSubmit={handleAddProduct} className="bg-white p-6 rounded-xl border border-gray-200 mb-6 grid grid-cols-1 md:grid-cols-2 gap-4 shadow-sm">
-                                        <input required placeholder="Product Name" value={newProduct.name} onChange={e => setNewProduct({...newProduct, name: e.target.value})} className="border border-gray-300 p-3 rounded-lg outline-none focus:border-indigo-500" />
-                                        <input required placeholder="Author / Brand" value={newProduct.author} onChange={e => setNewProduct({...newProduct, author: e.target.value})} className="border border-gray-300 p-3 rounded-lg outline-none focus:border-indigo-500" />
-                                        <input required type="number" placeholder="Price (e.g., 15000)" value={newProduct.price} onChange={e => setNewProduct({...newProduct, price: e.target.value})} className="border border-gray-300 p-3 rounded-lg outline-none focus:border-indigo-500" />
-                                        <select value={newProduct.category} onChange={e => setNewProduct({...newProduct, category: e.target.value})} className="border border-gray-300 p-3 rounded-lg outline-none focus:border-indigo-500 bg-white">
-                                            {categories.filter(c => c !== 'all').map(cat => <option key={cat} value={cat}>{categoryLabels[cat]}</option>)}
-                                        </select>
-                                        <input required placeholder="Emoji Icon (e.g., )" value={newProduct.image} onChange={e => setNewProduct({...newProduct, image: e.target.value})} className="border border-gray-300 p-3 rounded-lg outline-none focus:border-indigo-500 md:col-span-2" />
-                                        <div className="flex gap-3 md:col-span-2">
-                                            <button type="button" onClick={() => setShowAddForm(false)} className="flex-1 border border-gray-300 text-gray-700 p-3 rounded-lg hover:bg-gray-50">Cancel</button>
-                                            <button type="submit" className="flex-1 bg-green-600 text-white p-3 rounded-lg hover:bg-green-700 font-medium">Save Product</button>
-                                        </div>
-                                    </form>
-                                )}
+                                {showAddForm && <ProductForm onSubmit={handleAddProduct} onCancel={() => setShowAddForm(false)} accentColor="indigo" />}
                                 <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
                                     {myProducts.length === 0 ? (
                                         <div className="p-12 text-center text-gray-500">You haven't added any products yet.</div>
                                     ) : (
                                         <table className="w-full text-left">
-                                            <thead className="bg-gray-50"><tr><th className="p-4 text-sm font-semibold text-gray-600">Icon</th><th className="p-4 text-sm font-semibold text-gray-600">Name</th><th className="p-4 text-sm font-semibold text-gray-600">Category</th><th className="p-4 text-sm font-semibold text-gray-600">Price</th><th className="p-4 text-sm font-semibold text-gray-600">Action</th></tr></thead>
+                                            <thead className="bg-gray-50"><tr><th className="p-4 text-sm font-semibold text-gray-600">Cover</th><th className="p-4 text-sm font-semibold text-gray-600">Name</th><th className="p-4 text-sm font-semibold text-gray-600">Category</th><th className="p-4 text-sm font-semibold text-gray-600">Price</th><th className="p-4 text-sm font-semibold text-gray-600">Action</th></tr></thead>
                                             <tbody>
                                                 {myProducts.map(p => (
                                                     <tr key={p.id} className="border-t hover:bg-gray-50">
-                                                        <td className="p-4 text-2xl">{p.image}</td>
-                                                        <td className="p-4"><div className="font-medium text-gray-900">{p.name}</div><div className="text-sm text-gray-500">{p.author}</div></td>
+                                                        <td className="p-4">
+                                                            {p.image && p.image.startsWith('data:') ? (
+                                                                <img src={p.image} alt={p.name} className="w-10 h-10 object-contain rounded" />
+                                                            ) : (
+                                                                <span className="text-2xl">{p.image || '📦'}</span>
+                                                            )}
+                                                        </td>
+                                                        <td className="p-4"><div className="font-medium text-gray-900">{p.name}</div><div className="text-sm text-gray-500">{p.author}</div>{p.pdfName && <div className="text-xs text-purple-600 mt-1">PDF: {p.pdfName}</div>}</td>
                                                         <td className="p-4 capitalize text-sm text-gray-600">{p.category.replace('-', ' ')}</td>
                                                         <td className="p-4 font-medium text-gray-900">₦{p.price.toLocaleString()}</td>
                                                         <td className="p-4"><button onClick={() => handleDeleteProduct(p.id)} className="text-red-600 hover:text-red-800 text-sm font-medium bg-red-50 px-3 py-1.5 rounded-lg hover:bg-red-100 transition-colors">Delete</button></td>
@@ -458,7 +666,7 @@
                             <div>
                                 <h2 className="text-xl font-bold mb-4">My Sales History</h2>
                                 {myOrders.length === 0 ? (
-                                    <div className="bg-white p-12 rounded-xl border border-gray-200 text-center text-gray-500 shadow-sm"><div className="text-4xl mb-3"></div><p>No sales yet for your products.</p></div>
+                                    <div className="bg-white p-12 rounded-xl border border-gray-200 text-center text-gray-500 shadow-sm"><div className="text-4xl mb-3">📊</div><p>No sales yet for your products.</p></div>
                                 ) : (
                                     <div className="space-y-4">
                                         {myOrders.map(order => {
@@ -495,16 +703,16 @@
             const [cart, setCart] = useState([]);
             
             const [products, setProducts] = useState(() => {
-                const saved = localStorage.getItem('a1_products_v3');
+                const saved = localStorage.getItem('a1_products_v4');
                 return saved ? JSON.parse(saved) : defaultProducts;
             });
             const [orders, setOrders] = useState(() => {
-                const saved = localStorage.getItem('a1_orders_v3');
+                const saved = localStorage.getItem('a1_orders_v4');
                 return saved ? JSON.parse(saved) : [];
             });
 
-            useEffect(() => { localStorage.setItem('a1_products_v3', JSON.stringify(products)); }, [products]);
-            useEffect(() => { localStorage.setItem('a1_orders_v3', JSON.stringify(orders)); }, [orders]);
+            useEffect(() => { localStorage.setItem('a1_products_v4', JSON.stringify(products)); }, [products]);
+            useEffect(() => { localStorage.setItem('a1_orders_v4', JSON.stringify(orders)); }, [orders]);
 
             const addToCart = (product) => {
                 setCart(prev => {
@@ -520,10 +728,10 @@
             const handleCheckout = (customer, cartItems, totalAmount) => {
                 const newOrder = { id: Date.now().toString(), date: new Date().toLocaleString(), customer, items: cartItems, total: totalAmount };
                 setOrders(prev => [newOrder, ...prev]);
-                let message = `*🛒 New Order - A-One Bookshop*\n\n*Customer Details:*\nName: ${customer.name}\nAddress: ${customer.address}\nPhone: ${customer.phone}\n\n*Order Items:*\n`;
-                cartItems.forEach(item => { message += `- ${item.quantity}x ${item.name} (₦${(item.price * item.quantity).toLocaleString()})\n`; });
-                message += `\n*Total Amount: ₦${totalAmount.toLocaleString()}*`;
-                window.open(`https://wa.me/2348140730041?text=${encodeURIComponent(message)}`, '_blank');
+                let message = `*New Order - A-One Bookshop*\n\n*Customer Details:*\nName: ${customer.name}\nAddress: ${customer.address}\nPhone: ${customer.phone}\n\n*Order Items:*\n`;
+                cartItems.forEach(item => { message += `- ${item.quantity}x ${item.name} (N${(item.price * item.quantity).toLocaleString()})\n`; });
+                message += `\n*Total Amount: N${totalAmount.toLocaleString()}*`;
+                window.open(`https://wa.me/${ADMIN_PHONE}?text=${encodeURIComponent(message)}`, '_blank');
                 setCart([]);
                 setPage('home');
             };
@@ -532,7 +740,7 @@
 
             return (
                 <div className="min-h-screen bg-gray-50">
-                    {page !== 'admin-login' && page !== 'publisher-login' && <Navbar currentPage={page} setPage={setPage} cartCount={cartCount} />}
+                    {page !== 'admin-login' && page !== 'publisher-login' && page !== 'publisher-register' && <Navbar currentPage={page} setPage={setPage} cartCount={cartCount} />}
                     {page === 'home' && <Home setPage={setPage} products={products} />}
                     {page === 'shop' && <Shop addToCart={addToCart} products={products} />}
                     {page === 'cart' && <Cart cart={cart} removeFromCart={removeFromCart} updateQuantity={updateQuantity} onCheckout={handleCheckout} />}
@@ -544,6 +752,8 @@
                     {page === 'publisher-login' && <LoginGate title="Publisher Portal" password={PUBLISHER_PASSWORD} onLogin={() => { setIsPubAuth(true); setPage('publisher'); }} setPage={setPage} themeColor="indigo" />}
                     {page === 'publisher' && isPubAuth && <Publisher products={products} setProducts={setProducts} orders={orders} setPage={setPage} />}
                     {page === 'publisher' && !isPubAuth && <LoginGate title="Publisher Portal" password={PUBLISHER_PASSWORD} onLogin={() => setIsPubAuth(true)} setPage={setPage} themeColor="indigo" />}
+
+                    {page === 'publisher-register' && <PublisherRegister setPage={setPage} />}
 
                     <WhatsAppButton />
                 </div>
