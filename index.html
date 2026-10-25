@@ -551,8 +551,11 @@ If the image is unclear or not a product, return name as "Unknown Product" and c
                 }
             };
 
-            const applyResult = () => {
-                if (result) onAutoFill(result);
+           const applyResult = () => {
+                if (result) {
+                    // Pass the scanned image along with the AI data so it auto-fills the cover!
+                    onAutoFill({ ...result, scannedImage: imageBase64 });
+                }
             };
 
             return (
@@ -638,7 +641,8 @@ If the image is unclear or not a product, return name as "Unknown Product" and c
         }
 
         // ============ PRODUCT FORM WITH AI ============
-        function ProductFormWithAI({ onSubmit, onCancel, accentColor = 'amber', onOpenAIScan, pendingAIFill }) {
+
+                function ProductFormWithAI({ onSubmit, onCancel, accentColor = 'amber', onOpenAIScan, pendingAIFill }) {
             const [form, setForm] = useState(() => {
                 if (pendingAIFill) {
                     return {
@@ -648,14 +652,18 @@ If the image is unclear or not a product, return name as "Unknown Product" and c
                         price: pendingAIFill.suggestedPrice ? String(pendingAIFill.suggestedPrice) : '',
                         stock: '10',
                         category: pendingAIFill.category || 'physical-books',
-                        image: '',
+                        image: pendingAIFill.scannedImage || '', // AUTO-FILL THE SCANNED IMAGE!
                         pdfFile: null,
                         pdfName: ''
                     };
                 }
                 return { name: '', author: '', brand: '', price: '', stock: '10', category: 'physical-books', image: '', pdfFile: null, pdfName: '' };
             });
-            const [imagePreview, setImagePreview] = useState(null);
+            // Auto-set the preview if a scanned image was provided by AI
+            const [imagePreview, setImagePreview] = useState(pendingAIFill?.scannedImage || null);
+
+                    
+            
             const fileInputRef = useRef(null);
             const pdfInputRef = useRef(null);
 
