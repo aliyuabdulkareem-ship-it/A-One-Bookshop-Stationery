@@ -488,19 +488,38 @@
             const [result, setResult] = useState(null);
             const fileInputRef = useRef(null);
 
-            const handleFile = (e) => {
+                        const handleFile = (e) => {
                 const file = e.target.files[0];
                 if (!file) return;
-                if (file.size > 5 * 1024 * 1024) { alert('Image too large. Max 5MB.'); return; }
+                
                 const reader = new FileReader();
                 reader.onload = (ev) => {
-                    setImage(ev.target.result);
-                    setImageBase64(ev.target.result.split(',')[1]);
-                    setResult(null);
-                    setError('');
+                    const img = new Image();
+                    img.onload = () => {
+                        // Compress and resize image for speed
+                        const canvas = document.createElement('canvas');
+                        const MAX_WIDTH = 800; 
+                        const scaleSize = MAX_WIDTH / img.width;
+                        canvas.width = MAX_WIDTH;
+                        canvas.height = img.height * scaleSize;
+                        
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        
+                        // Convert to high-quality JPEG (much smaller than PNG)
+                        const compressedBase64 = canvas.toDataURL('image/jpeg', 0.8);
+                        const rawBase64 = compressedBase64.split(',')[1];
+                        
+                        setImage(compressedBase64);
+                        setImageBase64(rawBase64);
+                        setResult(null);
+                        setError('');
+                    };
+                    img.src = ev.target.result;
                 };
                 reader.readAsDataURL(file);
             };
+
 
             const analyzeImage = async () => {
                 if (!imageBase64) return;
@@ -513,17 +532,8 @@
                 setError('');
                 setResult(null);
                 try {
-                    const prompt = `Analyze this product image carefully. Identify if it's a book, e-book, audiobook, stationery item, art supply, office supply, or magazine.
-Return ONLY a valid JSON object (no markdown, no code blocks) with these exact keys:
-{
-  "name": "product name (be specific, include model/edition if visible)",
-  "author": "author name if it's a book, otherwise empty string",
-  "brand": "brand/manufacturer name if it's stationery/art/office/magazine, otherwise empty string",
-  "category": "one of: physical-books, ebooks, audiobooks, stationery, art-supplies, office-supplies, magazines",
-  "description": "brief 1-sentence description",
-  "suggestedPrice": estimated price in Nigerian Naira as a number, or 0 if unsure
-}
-If the image is unclear or not a product, return name as "Unknown Product" and category as "stationery".`;
+
+                                        const prompt = `Identify this product. Return ONLY raw JSON (no markdown) with keys: name, author (if book), brand (if not book), category (choose one: physical-books, ebooks, audiobooks, stationery, art-supplies, office-supplies, magazines), suggestedPrice (Naira number).`;
 
                     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${geminiKey}`, {
                         method: 'POST',
